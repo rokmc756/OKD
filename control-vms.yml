@@ -1,0 +1,22 @@
+- hosts: localhost
+
+  tasks:
+    - name: "{{ power_title }} Virtual Machines Without the Answer Param"
+      vmware_guest_powerstate:
+        hostname: "{{ vmware.esxi_hostname }}"
+        username: "{{ vmware.esxi_username }}"
+        password: "{{ vmware.esxi_password }}"
+        validate_certs: false
+        name: "{{ item }}"
+        state: "{{ power_state }}"
+      loop:
+        - "co9-node01"
+        - "co9-node02"
+        - "co9-node03"
+        - "co9-node04"
+        - "co9-node05"
+        - "co9-node06"
+        - "co9-node07"
+        - "rk9-freeipa"
+
+      # - "VMware vCenter Server"

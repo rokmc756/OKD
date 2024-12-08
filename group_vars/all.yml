@@ -1,0 +1,108 @@
+ansible_ssh_pass: "changeme"
+ansible_become_pass: "changeme"
+
+okd:
+  cluster_name: okd-kr
+  domain: "jtest.pivotal.io"
+  major_version: "1"
+  minor_version: "30"
+  patch_version: "0"
+  build_version: ""
+  repo_url: ""
+  download_url: ""
+  download: false
+  base_path: /root
+  host_num: "{{ groups['all'] | length }}"
+  net:
+    type: "virtual"                            # Or Physical
+    gateway: "192.168.0.1"
+    vipaddr: "192.168.1.89"
+    ipaddr0: "192.168.0.18"
+    ipaddr1: "192.168.1.18"
+    ipaddr2: "192.168.2.18"
+  client:
+    net:
+      type: "virtual"                          # Or Physical
+      cores: 1
+      ipaddr0: "192.168.0.18"
+      ipaddr1: "192.168.1.18"
+      ipaddr2: "192.168.2.18"
+  ext_storage:
+    net:
+      ipaddr0: "192.168.0."
+      ipaddr1: "192.168.1."
+  cni:
+    install: true
+    change_mtu: true
+    # Jumbo Frame should be enabled at the side fo Switch as well when it's true.
+    # In iptime, Advanced Setup -> Traffic -> Switch Setup -> Check Enable Jumbo Frame -> Apply
+    pod_network: "10.142.0.0/16"    # Calico
+    # pod_network: "100.96.0.0/16"  # Kube-Flannel
+    # pod_network: "10.244.0.0/16"  # Kube-Flannel : cni0
+    calico:
+      install: true
+      operator: ""
+      major_version: 3
+      minor_version: 27
+      patch_version: 4
+      # minor_version: 27
+      # patch_version: 3
+      download_url: "https://raw.githubusercontent.com/projectcalico/calico"
+      vxlan:
+        enable: false
+        mtu: 8950
+      ipip:            # bgp
+        enable: true
+        mtu: 8980
+      # https://docs.tigera.io/calico/latest/networking/configuring/mtu#configure-mtu
+      # https://docs.tigera.io/calico/latest/getting-started/kubernetes/requirements
+    tigera:
+      install: false
+      operator: ""
+      major_version: 3
+      minor_version: 28
+      patch_version: 0
+      download_url: "https://raw.githubusercontent.com/projectcalico/calico"
+      vxlan:
+        enable: false
+        mtu: 8950
+      ipip: # bgp
+        enable: false
+        mtu: 8980
+    kube_flannel:
+      install: false
+      major_version: 1
+      minor_version: 1
+      patch_version: 1
+      download_url: "https://raw.githubusercontent.com/coreos/flannel"
+      mtu: 8950
+      # mtu: 8973
+      # mtu: 1472
+      # mtu: 1400
+  lb:
+    cilium:
+      install: false
+      major_version: 1
+      minor_version: 15
+      patch_version: 6
+      download_url: "https://github.com/cilium/cilium-cli/releases/download"
+      api_server_port: 6443
+      cli:
+        install: false
+        major_version: 0
+        minor_version: 16
+        patch_version: 15
+        arch: "amd64"
+        download_url: "https://github.com/cilium/cilium-cli/releases/download"
+    metallb: false
+    loxilb: false
+    # https://blog.devgenius.io/loxilb-another-load-balancer-aabf4a29d810
+    # https://malwareanalysis.tistory.com/267
+
+
+vmware:
+  esxi_hostname: "192.168.0.231"
+  esxi_username: "root"
+  esxi_password: "Changeme34#$"
+
+

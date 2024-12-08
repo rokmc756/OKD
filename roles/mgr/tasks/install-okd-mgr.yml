@@ -1,0 +1,81 @@
+---
+# [1] Download Pull Secret from the RedHat officila site below.
+# It needs RedHat account to login there.
+# ⇒ https://cloud.redhat.com/openshift/create/local
+
+# [2] Create ignition file.
+# download OpenShift client
+# make sure the latest version ⇒ https://github.com/openshift/okd/releases/
+# wget https://github.com/openshift/okd/releases/download/4.11.0-0.okd-2022-07-29-154152/openshift-client-linux-4.11.0-0.okd-2022-07-29-154152.tar.gz \
+# https://github.com/openshift/okd/releases/download/4.11.0-0.okd-2022-07-29-154152/openshift-install-linux-4.11.0-0.okd-2022-07-29-154152.tar.gz
+
+# tar zxvf openshift-client-linux-4.11.0-0.okd-2022-07-29-154152.tar.gz
+# tar zxvf openshift-install-linux-4.11.0-0.okd-2022-07-29-154152.tar.gz
+# mv oc kubectl openshift-install /usr/local/bin/
+# chmod 755 /usr/local/bin/{oc,kubectl,openshift-install}
+# oc version
+# Client Version: 4.11.0-0.okd-2022-07-29-154152
+# Kustomize Version: v4.5.4
+# generate SSH key-pair for Manager Node to each Node
+# set passphrase if you need ⇒ if set it, it needs SSH-Agent, too (set no-passphrase on this example)
+
+
+
+# ssh-keygen -q -N ""
+# Enter file in which to save the key (/root/.ssh/id_rsa):
+
+# Create ignition file
+# mkdir /root/okd4
+
+# vi /root/okd4/install-config.yaml
+# [baseDomain] : specify base domain name
+# [metadata.name] : specify any cluster name
+# ⇒ (metadata.name).(baseDomain) is the same one with the name on DNSMasq you set like here
+# [controlPlane.replicas] : specify number of Control Plane Nodes
+# [pullSecret] : paste contents of Pull Secret you downloaded
+# [sshKey] : paste contents of SSH key you generated above (public key)
+#
+#
+#apiVersion: v1
+#baseDomain: srv.world
+#compute:
+#- hyperthreading: Enabled
+#  name: worker
+#  replicas: 0
+#controlPlane:
+#  hyperthreading: Enabled
+#  name: master
+#  replicas: 3
+#metadata:
+#  name: okd4
+#networking:
+#  clusterNetwork:
+#  - cidr: 10.128.0.0/14
+#    hostPrefix: 23
+#  networkType: OVNKubernetes
+#  serviceNetwork:
+#  - 192.168.1.0/16
+#platform:
+#  none: {}
+#pullSecret: '{"auths":*****}'
+#sshKey: 'ssh-rsa *****'
+
+
+# openshift-install create manifests --dir=/root/okd4
+# INFO Consuming Install Config from target directory
+# WARNING Making control-plane schedulable by setting MastersSchedulable to true for Scheduler cluster settings
+# INFO Manifests created in: okd4/manifests and okd4/openshift
+
+# openshift-install create ignition-configs --dir=/root/okd4
+# INFO Consuming Master Machines from target directory
+# INFO Consuming Common Manifests from target directory
+# INFO Consuming Worker Machines from target directory
+# INFO Consuming Openshift Manifests from target directory
+# INFO Consuming OpenShift Install (Manifests) from target directory
+# INFO Ignition-Configs created in: okd4 and okd4/auth
+
+
+# cp ./okd4/{bootstrap.ign,master.ign,worker.ign} /usr/share/nginx/html/
+
+# chmod 644 /usr/share/nginx/html/{bootstrap.ign,master.ign,worker.ign}
+

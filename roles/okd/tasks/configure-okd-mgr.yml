@@ -1,0 +1,116 @@
+---
+- name: Install DNSMaq and NGINX Packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "dnsmasq"
+    - "nginx-mod-stream"
+
+
+- name: Add Required Settings for OKD Cluster to Dnsmasq
+  lineinfile:
+    dest: "/etc/dnsmasq.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: add_required_config
+  with_items:
+    - { regexp: "^#address=/double-click.net/127.0.0.1",    line: "address=/apps.jtest.pivotal.io/192.168.1.181",        state: present }
+    - { regexp: "^#domain=example.com",                     line: "domain=jtest.pivotal.io",                             state: present }
+
+
+# Change DNS setting
+# Replace device name or IP address to your environment
+- name: CHange DNS Settings
+  shell: |
+    export DNS=$(nmcli device show ens224 | grep ^IP4.DNS | awk '{print $2}')
+    nmcli connection modify conn2 ipv4.dns "192.168.1.181 $DNS"
+    nmcli connection modify conn2 ipv4.dns-search "jtest.pivotal.io"
+    nmcli connection up conn2
+  register: config_dns_settings
+- debug: msg={{ config_dns_settings }}
+  when: print_debug == true
+
+
+- name: Restart DNSMasq
+  systemd:
+    name: dnsmasq
+    state: restarted
+  register: restart_dnsmasq
+  until: restart_dnsmasq is succeeded
+  retries: 20
+  delay: 10
+- debug: msg={{ restart_dnsmasq }}
+  when: print_debug == true
+
+
+- name: Add required settings for OKD Cluster to Nginx
+  lineinfile:
+    dest: "/etc/nginx/nginx.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: add_required_nginx_config
+  with_items:
+    - { regexp: "^        listen       80*",          line: "        listen       8080;",           state: present }
+    - { regexp: "^        listen       [::]*",        line: "        listen       [::]:8080;",      state: present }
+
+
+- name: Add NGINX Config Lines to the End
+  template:
+    dest: "/etc/nginx/{{ item }}"
+    src: "{{ item }}.j2"
+  register: add_nginx_config_lines
+  with_items:
+    - "okd-mgr-nginx.conf"
+- debug: msg={{ add_nginx_config_lines }}
+
+
+- name: Add NGINX Config for OKD's MGR
+  lineinfile:
+    dest: "/etc/nginx/okd-mgr-nginx.conf"
+    line: "include /etc/nginx/okd-mgr-nginx.conf;"
+    state: present
+
+
+- name: Restart NGNIX
+  systemd:
+    name: nginx
+    state: restarted
+  register: restart_nginx
+  until: restart_nginx is succeeded
+  retries: 20
+  delay: 10
+- debug: msg={{ restart_nginx }}
+  when: print_debug == true
+
+
+- name: Change SELinux Policy If It is Enabled
+  shell: |
+    setsebool -P httpd_can_network_connect on
+    setsebool -P httpd_graceful_shutdown on
+    setsebool -P httpd_can_network_relay on
+    setsebool -P nis_enabled on
+    semanage port -a -t http_port_t -p tcp 6443
+    semanage port -a -t http_port_t -p tcp 22623
+    semanage port -a -t http_port_t -p tcp 1936
+  register: config_dns_settings
+- debug: msg={{ config_dns_settings }}
+  when: print_debug == true
+
+
+- name: Enable Firewalld
+  import_tasks: enable-firewall.yml
+
+
+- name: Allow Service Ports If Firewalld is running
+  shell: |
+    firewall-cmd --add-service={dns,http,https}
+    firewall-cmd --add-port={6443/tcp,22623/tcp,1936/tcp,8080/tcp}
+    firewall-cmd --runtime-to-permanent
+  register: allow_firewalld_service_port
+- debug: msg={{ allow_firewalld_service_port }}
+  when: print_debug == true
+
+
