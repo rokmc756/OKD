@@ -1,10 +1,60 @@
 mgr:
-	@if [ "${r}" = "install" ]; then\
-		ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-mgr.yml --tags='install';\
+	@if [ "${r}" = "prepare" ]; then\
+		ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-mgr.yml --tags='prepare';\
+	elif [ "${r}" = "install" ]; then\
+                if [ ! -z ${r} ] && [ "${s}" = "coreos" ]; then\
+                        ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-mgr.yml -e '{install_coreos: True}' --tags='install';\
+                elif [ ! -z ${c} ] && [ "${s}" = "client" ]; then\
+                        ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{install_okd_client: True}' --tags='install';\
+                else\
+			echo "No Actions for Install OKD";\
+                fi;\
 	elif [ "${r}" = "uninstall" ]; then\
-		ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-mgr.yml --tags='uninstall';\
+                if [ ! -z ${r} ] && [ "${s}" = "coreos" ]; then\
+                        ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-mgr.yml -e '{uninstall_coreos: True}' --tags='uninstall';\
+                else\
+                        ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-mgr.yml -e '{uninstall_coreos: True}' --tags='uninstall';\
+                fi;\
 	else\
-		echo "No Actions for OKD MGR Node";\
+		echo "No Actions for OKD";\
 		exit;\
 	fi
 
+
+#mgr:
+#        @if [ "${r}" = "install" ]; then\
+#                if [ ! -z ${r} ] && [ "${s}" = "rbd" ]; then\
+#                        ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{enable_rbd: True}' --tags='install';\
+#                elif [ ! -z ${r} ] && [ "${s}" = "iscsi" ]; then\
+#                        if [ -z ${c} ];  then\
+#                                ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{enable_iscsi: True}' --tags='install';\
+#                        elif [ ! -z ${c} ] && [ "${c}" = "enable" ]; then\
+#                                ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{enable_iscsi: True}' -e '{enable_iscsi_client: True }' --tags='install';\
+#                        elif [ ! -z ${c} ] && [ "${c}" = "only" ]; then\
+#                                ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{enable_iscsi_client: True }' --tags='install';\
+#                        else\
+#                                echo "No Actions for Installing iSCSI with Client";\
+#                        fi\
+#                else\
+#                        echo "No Actions for Installing Block";\
+#                fi;\
+#        elif [ "${r}" = "uninstall" ]; then\
+#                if [ ! -z ${r} ] && [ "${s}" = "rbd" ]; then\
+#                        ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{disable_rbd: True}' --tags='uninstall';\
+#                elif [ ! -z ${r} ] && [ "${s}" = "iscsi" ]; then\
+#                        if [ -z ${c} ];  then\
+#                                ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{disable_iscsi: True}' --tags='uninstall';\
+#                        elif [ ! -z ${c} ] && [ "${c}" = "disable" ]; then\
+#                                ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{disable_iscsi: True}' -e '{disable_iscsi_client: True }' --tags='uninstall';\
+#                        elif [ ! -z ${c} ] && [ "${c}" = "only" ]; then\
+#                                ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} config-block.yml -e '{disable_iscsi_client: True }' --tags='uninstall';\
+#                        else\
+#                                echo "No Actions for Installing iSCSI with Client";\
+#                        fi\
+#                else\
+#                        echo "No Actions for Uninstalling Block";\
+#                fi;\
+#        else\
+#                echo "No Actions for Block";\
+#                exit;\
+#        fi

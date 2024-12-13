@@ -24,6 +24,12 @@
   with_items: "{{ groups['all'] }}"
 
 
+- name: Define OKD Version
+  set_fact:
+    okd_version: "{{ okd.major_version }}.{{ okd.minor_version }}.{{ okd.patch_version }}-{{ okd.build_version }}.okd-{{ okd.release_date }}"
+
+
+
 # https://stackoverflow.com/questions/36328907/ansible-get-all-the-ip-addresses-of-a-group
 #- name: Define Facts for All Worker's Hostname
 #  set_fact:

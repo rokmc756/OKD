@@ -1,0 +1,124 @@
+---
+- name: Download OpenShift Clients
+  get_url:
+    url: "{{ okd.download_url }}/{{ okd_version }}/{{ item }}-{{ okd_version }}.tar.gz"
+    dest: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    mode: 0644
+  register: download_okd_install_clients
+  with_items:
+    - openshift-client-linux
+    - openshift-install-linux
+- debug: msg={{ download_okd_install_clients }}
+  when: print_debug == true
+
+
+#- name: Check if OpenShift Clients Exists
+#  stat: path=/usr/local/bin/{{ item }}
+#  register: okd_clients_bin_exists
+#  with_items:
+#    - openshift-client-linux
+#    - openshift-install-linux
+#- debug: msg={{ okd_clients_bin_exists }}
+#  when: print_debug == true
+
+
+- name: Extract OpenShift Clients
+  unarchive:
+    src: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    dest: "/usr/local/bin/"
+    mode: 0755
+    owner: root
+    group: root
+    remote_src: true
+  register: extract_okd_install_clients
+  with_items:
+    - openshift-client-linux
+    - openshift-install-linux
+  # when: okd_clients_bin_exists.stat.exists == false and upload_okd_clients == true
+- debug: msg={{ extract_okd_install_clients }}
+  when: print_debug == true
+  # when: print_debug == true and okd_clients_bin_exists.stat.exists == false and upload_okd_clients == true
+
+
+- name: Check ODK Version
+  shell: |
+    oc version
+  register: check_oc_version
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ check_oc_version }}
+  when: print_debug == true
+
+
+- name: Create Directory for Ignition File
+  shell: |
+    mkidr {{ base_path }}/okd4
+  register: create_ignition_file
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  when: inventory_hostname in groups['master']
+- debug: msg={{ create_ignition_file }}
+  when: print_debug == true
+
+
+- name: Copy Config Files for Ignition File
+  template:
+    dest: "{{ okd.base_path }}/okd4/{{ item }}"
+    src: "{{ item }}.j2"
+  register: copy_ignition_file
+  with_items:
+    - "install-config.yaml"
+- debug: msg={{ copy_ignition_file }}
+
+
+- name: Create OKD Manifests
+  shell: |
+    openshift-install create manifests --dir=okd4 --log-level=debug
+  register: create_okd_manifests
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ create_okd_manifests }}
+  when: print_debug == true
+
+
+- name: Create ODK Ignition Configs
+  shell: |
+    openshift-install create ignition-configs --dir=okd4 --log-level=debug
+  register: create_okd_ignition_configs
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ create_okd_ignition_configs }}
+  when: print_debug == true
+
+
+- name: Copy Ignition File
+  shell: |
+    cp ./okd4/{bootstrap.ign,master.ign,worker.ign} /usr/share/nginx/html/
+  register: copy_ignition_file
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ copy_ignition_file }}
+  when: print_debug == true
+
+
+- name: Change Ignition File Permission
+  shell: |
+    chmod 644 /usr/share/nginx/html/{bootstrap.ign,master.ign,worker.ign}
+  register: change_ignition_file_permission
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ change_ignition_file_permission }}
+  when: print_debug == true
+

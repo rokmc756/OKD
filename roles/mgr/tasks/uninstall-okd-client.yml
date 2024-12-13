@@ -1,0 +1,97 @@
+---
+# 1
+- name: Delete Ignition File
+  file:
+    path: "/usr/share/nginx/html/{{ item }}"
+    state: absent
+  register: delete_ignition_file
+  args:
+    chdir: "{{ base_path }}"
+  with_items:
+    - "bootstrap.ign"
+    - "master.ign"
+    - "worker.ign"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ delete_ignition_file }}
+  when: print_debug == true
+
+
+# openshift-install destroy cluster --dir=okd4 --log-level=debug
+# openshift-install destroy bootstrap --dir=okd4 --log-level=debug
+
+
+# 2
+- name: Delete ODK Ignition Configs
+  shell: |
+    openshift-install delete ignition-configs --dir=okd4
+  register: delete_okd_ignition_configs
+  args:
+    chdir: "{{ base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ delete_okd_ignition_configs }}
+  when: print_debug == true
+
+
+# 3
+- name: Delete OKD Manifests
+  shell: |
+    openshift-install delete manifests --dir=okd4
+  register: delete_okd_manifests
+  args:
+    chdir: "{{ base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ delete_okd_manifests }}
+  when: print_debug == true
+
+
+# 4
+- name: Delete Config Files for Ignition File
+  file:
+    path: "{{ base_path }}/okd4/{{ item }}"
+    state: absent
+  register: delete_ignition_file
+  with_items:
+    - "install-config.yaml"
+- debug: msg={{ delete_ignition_file }}
+
+
+# 5
+- name: Delete Directory for Ignition File
+  file:
+    path: "{{ base_path }}/okd4"
+    state: absent
+  register: delete_ignition_file
+- debug: msg={{ delete_ignition_file }}
+  when: print_debug == true
+
+
+# 6
+- name: Delete OKD Client Binary
+  file:
+    path: "/usr/local/bin/{{ item }}"
+    state: absent
+  register: delete_okd_client_bin
+  with_items:
+    - oc
+    - kubectl
+    - openshift-install
+- debug: msg={{ delete_okd_client_bin }}
+  when: print_debug == true
+
+
+# 6
+- name: Delete OKD Client Archieves
+  file:
+    path: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    state: absent
+  register: delete_okd_client_archieves
+  with_items:
+    - openshift-client-linux
+    - openshift-install-linux
+- debug: msg={{ delete_okd_client_archieves }}
+  when: print_debug == true
+
+

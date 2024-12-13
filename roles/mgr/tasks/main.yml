@@ -7,13 +7,32 @@
 - name: Set Facts For Network and Packages Informations
   import_tasks: set-mgr-facts.yml
   tags:
+    - prepare
     - install
     - uninstall
 
 
-- name: Configure OKD Manager
-  import_tasks: configure-okd-mgr.yml
+- name: Prepare OKD Manager
+  import_tasks: config-okd-mgr.yml
+  tags: prepare
+  when: inventory_hostname in groups['manager']
+
+
+- name: Install OKD Install Cleint
+  import_tasks: install-okd-client.yml
   tags: install
+  when: install_okd_client is defined and install_okd_client == true and inventory_hostname in groups['master']
+
+
+- name: Install CoreOS
+  import_tasks: install-coreos.yml
+  tags: install
+  when: install_coreos is defined and install_coreos == true and inventory_hostname in groups['master']
+
+
+- name: Uninstall OKD Install Cleint
+  import_tasks: uninstall-okd-client.yml
+  tags: uninstall
   when: inventory_hostname in groups['manager']
 
 
