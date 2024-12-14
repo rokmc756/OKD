@@ -33,18 +33,6 @@
   when: print_debug == true
 
 
-- name: Restart DNSMasq
-  systemd:
-    name: dnsmasq
-    state: restarted
-  register: restart_dnsmasq
-  until: restart_dnsmasq is succeeded
-  retries: 20
-  delay: 10
-- debug: msg={{ restart_dnsmasq }}
-  when: print_debug == true
-
-
 - name: Add required settings for OKD Cluster to Nginx
   lineinfile:
     dest: "/etc/nginx/nginx.conf"
@@ -74,15 +62,32 @@
     state: present
 
 
-- name: Restart NGNIX
+#- name: Restart NGNIX
+#  systemd:
+#    name: nginx
+#    state: restarted
+#  register: restart_nginx
+#  until: restart_nginx is succeeded
+#  retries: 20
+#  delay: 10
+#- debug: msg={{ restart_nginx }}
+#  when: print_debug == true
+
+
+- name: Restart NGINX and DNSMasq Services
   systemd:
-    name: nginx
+    name: "{{ item }}"
     state: restarted
-  register: restart_nginx
-  until: restart_nginx is succeeded
-  retries: 20
+    enabled: true
+    daemon_reload: true
+  register: restart_service
+  until: restart_service is succeeded
+  retries: 10
   delay: 10
-- debug: msg={{ restart_nginx }}
+  with_items:
+    - dnsmasq
+    - nginx
+- debug: msg={{ restart_service }}
   when: print_debug == true
 
 

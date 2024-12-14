@@ -54,7 +54,7 @@
 
 - name: Create Directory for Ignition File
   shell: |
-    mkidr {{ base_path }}/okd4
+    mkdir {{ okd.base_path }}/okd4
   register: create_ignition_file
   args:
     chdir: "{{ okd.base_path }}"

@@ -1,5 +1,5 @@
 ---
-- name: Disallow Service Ports If Firewalld is running
+- name: Disallow Service Ports If Firewalld is Running
   shell: |
     firewall-cmd --remove-service={dns,http,https}
     firewall-cmd --remove-port={6443/tcp,22623/tcp,1936/tcp,8080/tcp}
@@ -36,7 +36,7 @@
   register: stop_nginx
   ignore_errors: true
   until: stop_nginx is succeeded
-  retries: 20
+  retries: 10
   delay: 10
 - debug: msg={{ stop_nginx }}
   when: print_debug == true
@@ -61,7 +61,7 @@
 - debug: msg={{ delete_nginx_config_file }}
 
 
-- name: Rollback required settings for OKD Cluster to Nginx
+- name: Rollback Required Settings for OKD Cluster to Nginx
   lineinfile:
     dest: "/etc/nginx/nginx.conf"
     regexp: "{{ item.regexp }}"
@@ -81,7 +81,7 @@
   register: stop_dnsmasq
   ignore_errors: true
   until: stop_dnsmasq is succeeded
-  retries: 20
+  retries: 10
   delay: 10
 - debug: msg={{ stop_dnsmasq }}
   when: print_debug == true

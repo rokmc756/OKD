@@ -24,16 +24,22 @@
   when: install_okd_client is defined and install_okd_client == true and inventory_hostname in groups['master']
 
 
-- name: Install CoreOS
-  import_tasks: install-coreos.yml
+- name: Install CoreOS BootStrap
+  import_tasks: install-bootstrap.yml
   tags: install
-  when: install_coreos is defined and install_coreos == true and inventory_hostname in groups['master']
+  when: install_bootstrap is defined and install_bootstrap == true and inventory_hostname in groups['bootstrap']
+
+
+- name: Install CoreOS Master
+  import_tasks: install-master.yml
+  tags: install
+  when: install_master is defined and install_master == true and inventory_hostname in groups['master']
 
 
 - name: Uninstall OKD Install Cleint
   import_tasks: uninstall-okd-client.yml
   tags: uninstall
-  when: inventory_hostname in groups['manager']
+  when: uninstall_okd_client is defined and uninstall_okd_client == true and inventory_hostname in groups['master']
 
 
 #- name: Install OKD Manager
@@ -45,5 +51,5 @@
 - name: Uninstall OKD Manager
   import_tasks: uninstall-okd-mgr.yml
   tags: uninstall
-  when: inventory_hostname in groups['manager']
+  when: inventory_hostname in groups['master']
 

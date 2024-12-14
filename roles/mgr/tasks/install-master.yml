@@ -1,5 +1,5 @@
 ---
-- name: Install CoreOS installer Package
+- name: Install CoreOS Installer Package
   package:
     name: "{{ item }}"
     state: present
@@ -25,11 +25,12 @@
 #- debug: msg={{ copy_ignition_json_temp }}
 
 
-- name: Install Fedora CoreOS to Local NVME Drive
+- name: Install Fedora CoreOS Master to Local NVME Drive
   shell: |
-    coreos-installer install /dev/nvme0n1 --ignition-url=http://192.168.1.181:8080/bootstrap.ign --insecure-ignition --copy-network
-  register: install_coreos_local_drive
-- debug: msg={{ install_coreos_local_drive }}
+    coreos-installer install /dev/nvme0n1 --ignition-url=http://192.168.1.181:8080/master.ign \
+    --ignition-url=http://192.168.1.181:8080/user.ign --insecure-ignition --copy-network
+  register: install_coreos_master_local_drive
+- debug: msg={{ install_coreos_master_local_drive }}
   when: print_debug == true
 
 
@@ -58,11 +59,10 @@
     - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"Fedora CoreOS\"", dest: "/etc/default/grub", state: present }
 - debug: msg={{ change_default_boot_entry }}
   when: print_debug == true
+# - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"saved\"", dest: "/etc/default/grub", state: present }
 
-#  - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"saved\"", dest: "/etc/default/grub", state: present }
 
-
-- name: Install Fedora CoreOS to local hard drive
+- name: Install Fedora CoreOS Master to Local NVME Drive
   shell: |
     grub2-mkconfig -o /boot/grub2/grub.cfg
   register: install_coreos_local_drive
@@ -81,5 +81,4 @@
 
 
 - meta: flush_handlers
-
 
