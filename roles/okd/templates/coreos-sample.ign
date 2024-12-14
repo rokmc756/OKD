@@ -1,0 +1,120 @@
+variant: fcos
+version: 1.5.0
+systemd:
+
+  units:
+    - name: systemd-resolved.service
+      enabled: false
+
+    - name: polkit.service
+      enabled: false
+
+    - name: fwupd.service
+      enabled: false
+
+    - name: fwupd-refresh.service
+      enabled: false
+
+    - name: fwupd-refresh.timer
+      enabled: false
+
+storage:
+
+  files:
+
+    - path: /etc/hostname
+      mode: 0644
+      contents:
+        inline: core01
+
+    - path: /etc/sysctl.d/90-k8s.conf
+      contents:
+        inline: |
+          fs.file-max=6815744
+          net.core.rmem_max=4194304
+          net.core.wmem_max=1048576
+          net.ipv4.ip_forward=1
+          net.ipv4.ip_local_reserved_ports=30000-32767
+          kernel.pid_max=4194304
+          net.ipv4.conf.all.arp_announce=2
+          net.ipv4.neigh.default.gc_thresh1=8192
+          net.ipv4.neigh.default.gc_thresh2=32768
+          net.ipv4.neigh.default.gc_thresh3=65536
+          net.ipv6.neigh.default.gc_thresh1=8192
+          net.ipv6.neigh.default.gc_thresh2=32768
+          net.ipv6.neigh.default.gc_thresh3=65536
+          vm.max_map_count=262144
+          fs.inotify.max_user_watches=65536
+          fs.inotify.max_user_instances=8192
+          net.ipv4.tcp_syncookies=1
+          kernel.panic=10
+          kernel.panic_on_oops=1
+          vm.overcommit_memory=1
+          net.netfilter.nf_conntrack_max=1000000
+          net.nf_conntrack_max=1000000
+
+    - path: /etc/NetworkManager/conf.d/99-k8s.conf 
+      overwrite: true
+      contents:
+        inline: |
+          [main]
+          rc-manager=unmanaged
+
+#    - path: /etc/ssh/sshd_config.d/10-enable-passwords.conf
+#      mode: 0644
+#      overwrite: true
+#      contents:
+#        inline: |
+#          PasswordAuthentication yes
+
+    - path: /etc/selinux/config 
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          # disabled selinux
+          SELINUX=disabled
+          SELINUXTYPE=targeted
+
+    - path: /etc/chrony.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          pool time.google.com iburst
+          driftfile /var/lib/chrony/drift
+          makestep 1.0 3
+          rtcsync
+          logdir /var/log/chrony
+
+
+    - path: /etc/systemd/resolved.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          [Resolve]
+          DNSStubListener=no
+
+    - path: /etc/resolv.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          nameserver 192.168.1.1
+          nameserver 8.8.8.8
+
+  links:
+    - path: /etc/localtime
+      overwrite: true
+      target: /usr/share/zoneinfo/Asia/Bangkok
+
+passwd:
+  users:
+    - name: core
+      groups:
+        - wheel
+        - sudo
+#      password_hash: $1$5wA1asuh$yq41nxxxEvAmiG.
+      ssh_authorized_keys:
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5xxxr+F5/cctW5sTbd9ecBHUt79rY7UAtC3fj
