@@ -1,7 +1,0 @@
-#!/bin/sh
-exec tail -n +3 $0
-
-menuentry "Fedora CoreOS" {
-    set root=(hd2,2)
-    chainloader +1
-}

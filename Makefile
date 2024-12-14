@@ -31,8 +31,8 @@ all:
 hosts:
 	make -f ./makefile_configs/Makefile.hosts r=${r} s=${s} c=${c} USERNAME=${USERNAME}
 
-mgr:
-	make -f ./makefile_configs/Makefile.mgr r=${r} s=${s} c=${c} USERNAME=${USERNAME}
+okd:
+	make -f ./makefile_configs/Makefile.okd r=${r} s=${s} c=${c} USERNAME=${USERNAME}
 
 shutdown: role-update control-vms.yml
 	ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} control-vms.yml --extra-vars "power_state=shutdown-guest power_title=Shutdown VMs"

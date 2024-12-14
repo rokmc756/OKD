@@ -1,71 +1,49 @@
 ---
-# Install OKD that is the upstream version of Red Hat OpenShift.
-# This example is based on the environment like follows.
-# --------------+----------------+-----------------+--------------
-#               |192.168.1.181   |                 |192.168.1.182
-# +-------------+-------------+  |  +--------------+-------------+
-# |  [mgr.jtest.pivotal.io]   |  |  |[bootstrap.jtest.pivotal.io]|
-# |        Manager Node       |  |  |       Bootstrap Node       |
-# |           DNS             |  |  |                            |
-# |          Nginx            |  |  |                            |
-# +---------------------------+  |  +----------------------------+
-#                                |
-# --------------+----------------+-----------------+--------------
-#               |192.168.1.183   |                 |192.168.1.184
-# +-------------+-------------+  |  +--------------+-------------+
-# |[master01.jtest.pivotal.io]|  |  |[master02.jtest.pivotal.io] |
-# |      Control Plane#1      |  |  |      Control Plane#2       | 
-# |                           |  |  |                            |
-# |                           |  |  |                            |
-# +---------------------------+  |  +----------------------------+
-#                                |
-# --------------+----------------+
-#               |192.168.1.185
-# +-------------+-------------+
-# |[master03.jtest.pivotal.io]|
-# |      Control Plane#3      |
-# |                           |
-# |                           |
-# +---------------------------+
-#
-#
-# The system minimum requirements are follows. ( By Official Doc )
-#
-#  * Bootstrap Node      ⇒ 4 CPU, 16 GB RAM, 100 GB Storage, Fedora CoreOS
-#  * Control Plane Node  ⇒ 4 CPU, 16 GB RAM, 100 GB Storage, Fedora CoreOS
-#  * Compute Node        ⇒ 2 CPU,  8 GB RAM, 100 GB Storage, Fedora CoreOS
-#
-# * Bootstrap Node is needed only when bootstraping cluster.
-# Configure Manager Node first like here, next, Create ignition file on Manager Node like follows.
-
-
-- name: Check OS ( OKD Master )
+- name: Check OS ( OKD )
   fail: msg="Not a Red Hat or SuSE based system!"
   when: ansible_os_family != 'RedHat' or  ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky'
 
 
 - name: Set Facts For Network and Packages Informations
-  import_tasks: set-master-facts.yml
+  import_tasks: set-okd-facts.yml
   tags:
+    - prepare
     - install
     - uninstall
 
 
-- name: Configure OKD Master
-  import_tasks: configure-okd-master.yml
+- name: Prepare OKD Manager
+  import_tasks: install-mgr.yml
   tags: install
-  when: inventory_hostname in groups['master']
+  when: install_mgr is defined and install_mgr == true and inventory_hostname in groups['manager']
 
 
-#- name: Install OKD Master
-#  import_tasks: install-okd-master.yml
-#  tags: install
-#  when: inventory_hostname in groups['master']
+- name: Install OKD Install Cleint
+  import_tasks: install-client.yml
+  tags: install
+  when: install_client is defined and install_client == true and inventory_hostname in groups['manager']
 
 
-- name: Uninstall OKD Master
-  import_tasks: uninstall-okd-master.yml
+- name: Install CoreOS BootStrap
+  import_tasks: install-bootstrap.yml
+  tags: install
+  when: install_bootstrap is defined and install_bootstrap == true and inventory_hostname in groups['bootstrap']
+
+
+- name: Install CoreOS Master
+  import_tasks: install-master.yml
+  tags: install
+  when: install_master is defined and install_master == true and inventory_hostname in groups['master']
+
+
+- name: Uninstall OKD Install Cleint
+  import_tasks: uninstall-client.yml
   tags: uninstall
-  when: inventory_hostname in groups['master']
+  when: uninstall_client is defined and uninstall_client == true and inventory_hostname in groups['manager']
 
+
+- name: Uninstall OKD Manager
+  import_tasks: uninstall-mgr.yml
+  tags: uninstall
+  when: uninstall_mgr is defined and uninstall_mgr == true and inventory_hostname in groups['manager']
 

@@ -60,7 +60,6 @@
     chdir: "{{ okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  when: inventory_hostname in groups['master']
 - debug: msg={{ create_ignition_file }}
   when: print_debug == true
 
@@ -97,6 +96,8 @@
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ create_okd_ignition_configs }}
   when: print_debug == true
+
+
 
 
 - name: Copy Ignition File

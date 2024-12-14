@@ -74,6 +74,14 @@
     - { regexp: "^        listen       [::]*",        line: "        listen       [::]:80;",      state: present }
 
 
+- name: Delete DNSMasq Server
+  lineinfile:
+    dest: "/etc/resolv.conf"
+    regexp: "^nameserver 127.0.0.1"
+    state: absent
+  register: delete_dnsmasq_server
+
+
 - name: Stop DNSMasq
   systemd:
     name: dnsmasq
@@ -91,12 +99,15 @@
 # Replace device name or IP address to your environment
 - name: Rollback DNS Settings
   shell: |
-    export DNS=$(nmcli device show ens224 | grep ^IP4.DNS | awk '{print $2}' | sed 1d)
-    nmcli connection modify conn2 ipv4.dns "$DNS"
-    nmcli connection modify conn2 ipv4.dns-search "jtest.pivotal.io"
-    nmcli connection up conn2
+    export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}' | sed 1d)
+    nmcli connection modify {{ item.conn_name }} ipv4.dns "$DNS"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "jtest.pivotal.io"
+    nmcli connection up {{ item.conn_name }}
   register: rollback_dns_settings
-  ignore_errors: true
+  with_items:
+    - { dev_ip_addr: "192.168.0.181", netdev_name: "ens192", conn_name: conn1 }
+    - { dev_ip_addr: "192.168.1.181", netdev_name: "ens224", conn_name: conn2 }
+    - { dev_ip_addr: "192.168.2.181", netdev_name: "ens256", conn_name: conn3 }
 - debug: msg={{ rollback_dns_settings }}
   when: print_debug == true
 
@@ -110,8 +121,8 @@
   register: add_required_config
   ignore_errors: true
   with_items:
-    - { regexp: "^address=/apps.jtest.pivotal.io/192.168.1.181",   line: "#address=/double-click.net/127.0.0.1",   state: present }
-    - { regexp: "^domain=jtest.pivotal.io",                        line: "^#domain=example.com",                   state: present }
+    - { regexp: "^address=/apps.okd4.pivotal.io/192.168.1.181",   line: "#address=/double-click.net/127.0.0.1",   state: present }
+    - { regexp: "^domain=okd4.pivotal.io",                        line: "^#domain=example.com",                   state: present }
 
 
 - name: Uninstall DNSMaq and NGINX Packages
