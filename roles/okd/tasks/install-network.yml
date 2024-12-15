@@ -24,7 +24,7 @@
 - name: CHange DNS Settings
   shell: |
     export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
-    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ item.dev_ip_addr }} $DNS"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns "192.168.1.181 $DNS"
     nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ okd.domain }}"
     nmcli connection up {{ item.conn_name }}
   register: config_dns_settings
