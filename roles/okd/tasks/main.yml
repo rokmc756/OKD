@@ -7,9 +7,20 @@
 - name: Set Facts For Network and Packages Informations
   import_tasks: set-okd-facts.yml
   tags:
-    - prepare
     - install
     - uninstall
+
+
+- name: Install Network
+  import_tasks: install-network.yml
+  tags: install
+  when: install_network is defined and install_network == true
+
+
+- name: Uninstall Network
+  import_tasks: uninstall-network.yml
+  tags: uninstall
+  when: uninstall_network is defined and uninstall_network == true
 
 
 - name: Prepare OKD Manager

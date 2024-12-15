@@ -41,6 +41,7 @@ ansible_python_interpreter=/usr/bin/python3
 [manager]
 mgr             ansible_ssh_host=192.168.1.181
 
+$ make okd r=install s=network
 $ make okd r=install s=mgr
 ```
 

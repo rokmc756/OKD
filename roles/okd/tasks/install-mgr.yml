@@ -1,40 +1,10 @@
 ---
-- name: Install DNSMaq and NGINX Packages
+- name: Install NGINX Packages
   package:
     name: "{{ item }}"
     state: present
   with_items:
-    - "dnsmasq"
     - "nginx-mod-stream"
-
-
-- name: Add Required Settings for OKD Cluster to Dnsmasq
-  lineinfile:
-    dest: "/etc/dnsmasq.conf"
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    state: "{{ item.state }}"
-  register: add_required_config
-  with_items:
-    - { regexp: "^#address=/double-click.net/127.0.0.1",    line: "address=/apps.okd4.pivotal.io/192.168.1.181",        state: present }
-    - { regexp: "^#domain=example.com",                     line: "domain=okd4.pivotal.io",                             state: present }
-
-
-# Change DNS setting
-# Replace device name or IP address to your environment
-- name: CHange DNS Settings
-  shell: |
-    export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
-    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ item.dev_ip_addr }} $DNS"
-    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "okd4.pivotal.io"
-    nmcli connection up {{ item.conn_name }}
-  register: config_dns_settings
-  with_items:
-    - { dev_ip_addr: "192.168.0.181", netdev_name: "ens192", conn_name: conn1 }
-    - { dev_ip_addr: "192.168.1.181", netdev_name: "ens224", conn_name: conn2 }
-    - { dev_ip_addr: "192.168.2.181", netdev_name: "ens256", conn_name: conn3 }
-- debug: msg={{ config_dns_settings }}
-  when: print_debug == true
 
 
 - name: Add Required Settings for OKD Cluster to Nginx
@@ -66,28 +36,7 @@
     state: present
 
 
-- name: Configure DNSMasq Server
-  lineinfile:
-    dest: "/etc/resolv.conf"
-    line: "nameserver 127.0.0.1"
-    insertafter: '^search*'
-    state: present
-  register: config_dnsmasq_server
-
-
-#- name: Restart NGNIX
-#  systemd:
-#    name: nginx
-#    state: restarted
-#  register: restart_nginx
-#  until: restart_nginx is succeeded
-#  retries: 20
-#  delay: 10
-#- debug: msg={{ restart_nginx }}
-#  when: print_debug == true
-
-
-- name: Restart NGINX and DNSMasq Services
+- name: Restart NGINX
   systemd:
     name: "{{ item }}"
     state: restarted
@@ -98,7 +47,6 @@
   retries: 10
   delay: 10
   with_items:
-    - dnsmasq
     - nginx
 - debug: msg={{ restart_service }}
   when: print_debug == true
@@ -130,5 +78,4 @@
   register: allow_firewalld_service_port
 - debug: msg={{ allow_firewalld_service_port }}
   when: print_debug == true
-
 

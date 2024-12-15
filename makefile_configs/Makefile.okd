@@ -8,6 +8,8 @@ okd:
                         ansible-playbook -i ansible-hosts-bootstrap --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-okd.yml -e '{install_bootstrap: True}' --tags='install';\
                 elif [ ! -z ${r} ] && [ "${s}" = "master" ]; then\
                         ansible-playbook -i ansible-hosts-master --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-okd.yml -e '{install_master: True}' --tags='install';\
+                elif [ ! -z ${r} ] && [ "${s}" = "network" ]; then\
+                        ansible-playbook -i ansible-hosts --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-okd.yml -e '{install_network: True}' --tags='install';\
                 else\
 			echo "No Actions for Install OKD";\
                 fi;\
@@ -20,6 +22,8 @@ okd:
                         ansible-playbook -i ansible-hosts-bootstrap  --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-okd.yml -e '{uninstall_bootstrap: True}' --tags='uninstall';\
                 elif [ ! -z ${r} ] && [ "${s}" = "master" ]; then\
                         ansible-playbook -i ansible-hosts-master --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-okd.yml -e '{uninstall_master: True}' --tags='uninstall';\
+                elif [ ! -z ${r} ] && [ "${s}" = "network" ]; then\
+                        ansible-playbook -i ansible-hosts --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-okd.yml -e '{uninstall_network: True}' --tags='uninstall';\
                 else\
 			echo "No Actions for Uninstall OKD";\
                 fi;\

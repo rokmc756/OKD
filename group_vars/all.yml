@@ -1,12 +1,9 @@
 ansible_ssh_pass: "changeme"
 ansible_become_pass: "changeme"
 
-# openshift-client-linux-4.15.0-0.okd-2024-03-10-010116.tar.gz
-# openshift-install-linux-4.15.0-0.okd-2024-03-10-010116.tar.gz
-
 okd:
   cluster_name: okd-kr
-  domain: "jtest.pivotal.io"
+  domain: "okd4.pivotal.io"
   major_version: "4"
   minor_version: "15"
   patch_version: "0"
@@ -108,5 +105,4 @@ vmware:
   esxi_hostname: "192.168.0.231"
   esxi_username: "root"
   esxi_password: "Changeme34#$"
-
 

@@ -3,13 +3,27 @@
   get_url:
     url: "{{ okd.download_url }}/{{ okd_version }}/{{ item }}-{{ okd_version }}.tar.gz"
     dest: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    owner: root
+    group: root
     mode: 0644
   register: download_okd_install_clients
   with_items:
     - openshift-client-linux
     - openshift-install-linux
+  when: download_client == true
 - debug: msg={{ download_okd_install_clients }}
-  when: print_debug == true
+  when: print_debug == true and download_client == true
+
+
+- name: Upload OpenShift Clients
+  copy: src={{ item }}-{{ okd_version }}.tar.gz dest={{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz mode=0644 owner=root group=root
+  register: upload_okd_install_clients
+  with_items:
+    - openshift-client-linux
+    - openshift-install-linux
+  when: download_client == false
+- debug: msg={{ upload_okd_install_clients }}
+  when: print_debug == true and download_client == false
 
 
 #- name: Check if OpenShift Clients Exists
@@ -96,7 +110,6 @@
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ create_okd_ignition_configs }}
   when: print_debug == true
-
 
 
 
