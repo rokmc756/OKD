@@ -57,4 +57,5 @@
   ignore_errors: true
   with_items:
     - "dnsmasq"
+    - "bind-utils"
 

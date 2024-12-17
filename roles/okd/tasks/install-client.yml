@@ -54,6 +54,18 @@
   # when: print_debug == true and okd_clients_bin_exists.stat.exists == false and upload_okd_clients == true
 
 
+- name: Set SELinux Policy
+  shell: |
+    restorecon -RFv /usr/local/bin/*
+  register: set_selinux_policy
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ set_selinux_policy }}
+  when: print_debug == true
+
+
 - name: Check ODK Version
   shell: |
     oc version
