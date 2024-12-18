@@ -22,17 +22,17 @@
 #  register: copy_ignition_json_temp
 #  with_items:
 #    - "ignition.json"
-#    - "dns-config.ini"
 #- debug: msg={{ copy_ignition_json_temp }}
 
 
-- name: Install Fedora CoreOS Master to Local NVME Drive
+- name: Install Fedora CoreOS Worker to Local NVME Drive
   shell: |
-    coreos-installer install /dev/nvme0n1 --ignition-url=http://{{ manager_ipaddr1 }}:8080/master.ign \
+    coreos-installer install /dev/nvme0n1 --ignition-url=http://{{ manager_ipaddr1 }}:8080/worker.ign \
     --insecure-ignition --copy-network
-  register: install_coreos_master_local_drive
-- debug: msg={{ install_coreos_master_local_drive }}
+  register: install_coreos_worker_local_drive
+- debug: msg={{ install_coreos_worker_local_drive }}
   when: print_debug == true
+  # --ignition-url=http://192.168.1.181:8080/user.ign --insecure-ignition --copy-network
 
 
 - name: Copy CoreOS Boot Entry for 1st NVME Disk

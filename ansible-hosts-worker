@@ -7,6 +7,7 @@ ansible_python_interpreter=/usr/bin/python3
 [manager]
 mgr             ansible_ssh_host=192.168.1.181
 
-[master]
-master02        ansible_ssh_host=192.168.1.184
-master03        ansible_ssh_host=192.168.1.185
+
+[compute]
+compute01       ansible_ssh_host=192.168.1.186
+compute02       ansible_ssh_host=192.168.1.187

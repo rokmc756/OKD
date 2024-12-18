@@ -27,7 +27,7 @@
 
 - name: Install Fedora CoreOS Boot Strap to Local NVME Drive
   shell: |
-    coreos-installer install /dev/nvme0n1 --ignition-url=http://192.168.1.181:8080/bootstrap.ign \
+    coreos-installer install /dev/nvme0n1 --ignition-url=http://{{ manager_ipaddr1 }}:8080/bootstrap.ign \
     --insecure-ignition --copy-network
   register: install_coreos_bootstrap_local_drive
 - debug: msg={{ install_coreos_bootstrap_local_drive }}
@@ -80,6 +80,11 @@
   notify:
     - Waiting for Server to Come Back after Restart
 
+
+# After CoreOS Rebooted
+#
+# The primary services are release-image.service followed by bootkube.service. To watch their status, run e.g.
+# journalctl -b -f -u release-image.service -u bootkube.service
 
 - meta: flush_handlers
 

@@ -16,7 +16,7 @@
     state: "{{ item.state }}"
   register: add_required_config
   with_items:
-    - { regexp: "^#address=/double-click.net/127.0.0.1",    line: "address=/apps.{{ okd.domain }}/{{ mgr_ipaddr1 }}",        state: present }
+    - { regexp: "^#address=/double-click.net/127.0.0.1",    line: "address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",        state: present }
     - { regexp: "^#domain=example.com",                     line: "domain={{ okd.domain }}",                             state: present }
 
 
@@ -25,7 +25,7 @@
 - name: CHange DNS Settings
   shell: |
     export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
-    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ mgr_ipaddr1 }} $DNS"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ manager_ipaddr1 }} $DNS"
     nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ okd.domain }}"
     nmcli connection up {{ item.conn_name }}
   register: config_dns_settings

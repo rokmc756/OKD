@@ -47,6 +47,12 @@
   when: install_master is defined and install_master == true and inventory_hostname in groups['master']
 
 
+- name: Install CoreOS Worker
+  import_tasks: install-worker.yml
+  tags: install
+  when: install_worker is defined and install_worker == true and inventory_hostname in groups['compute']
+
+
 - name: Uninstall OKD Install Cleint
   import_tasks: uninstall-client.yml
   tags: uninstall
