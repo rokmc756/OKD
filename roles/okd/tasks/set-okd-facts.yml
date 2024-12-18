@@ -24,9 +24,9 @@
   with_items: "{{ groups['all'] }}"
 
 
-- name: Get Manager DNS IP Address
+- name: Get Manager Manager IP Address
   set_fact:
-    dns_ipaddr1: "{{ hostvars[inventory_hostname]['ansible_'~netdev1].ipv4.address }}"
+    mgr_ipaddr1: "{{ hostvars[inventory_hostname]['ansible_'~netdev1].ipv4.address }}"
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['all'] }}"

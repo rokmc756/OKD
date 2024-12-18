@@ -148,3 +148,16 @@
 - debug: msg={{ change_ignition_file_permission }}
   when: print_debug == true
 
+
+- name: Set SELinux Policy
+  shell: |
+    restorecon -RFv /usr/share/nginx/html/*
+  register: set_selinux_policy
+  args:
+    chdir: "{{ okd.base_path }}"
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+- debug: msg={{ set_selinux_policy }}
+  when: print_debug == true
+
+

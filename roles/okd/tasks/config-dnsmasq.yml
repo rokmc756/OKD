@@ -46,6 +46,17 @@
   register: config_dnsmasq_server
 
 
+- name: Change Search Domain
+  lineinfile:
+    dest: "/etc/resolv.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: change_search_domain
+  with_items:
+    - { regexp: "^search jtest.pivotal.io",  line: "search okd4.pivotal.io",  state: present }
+
+
 - name: Restart DNSMasq Services
   systemd:
     name: "{{ item }}"

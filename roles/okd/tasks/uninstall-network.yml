@@ -46,8 +46,19 @@
   register: add_required_config
   ignore_errors: true
   with_items:
-    - { regexp: "^address=/apps.{{ okd.domain }}/{{ ipaddr1 }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
+    - { regexp: "^address=/apps.{{ okd.domain }}/{{ mgr_ipaddr1 }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
     - { regexp: "^domain={{ okd.domain }}",                        line: "^#domain=example.com",                   state: present }
+
+
+- name: Rollback Search Domain
+  lineinfile:
+    dest: "/etc/resolv.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: rollback_search_domain
+  with_items:
+    - { regexp: "^search okd4.pivotal.io",    line: "search jtest.pivotal.io",        state: present }
 
 
 - name: Uninstall DNSMaq and NGINX Packages
