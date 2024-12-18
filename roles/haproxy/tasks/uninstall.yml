@@ -1,0 +1,31 @@
+---
+- name: Set SELinux Context for HA Proxy
+  shell: setsebool -P haproxy_connect_any=0
+  ignore_errors: yes
+
+
+- name: Disable the Systemd HA Proxy Service
+  systemd:
+    name: haproxy
+    enabled: no
+    state: stopped
+  ignore_errors: yes
+
+
+- name: Force Systemd to Reread Configs
+  systemd:
+    daemon_reload: yes
+
+
+- name: Uninstall All Packages for HA Proxy
+  yum: name={{item}} state=absent
+  with_items:
+   - bind-utils
+   - haproxy
+
+
+- name: Delete haproxy.cfg
+  file:
+    path: /etc/haproxy/haproxy.cfg
+    state: absent
+

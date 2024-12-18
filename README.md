@@ -90,6 +90,25 @@ $ make okd r=install s=master
 
 
 ## References
+- https://www.pivert.org/deploy-openshift-okd-on-proxmox-ve-or-bare-metal-tutorial/
+- https://stackoverflow.com/questions/65266545/okd-installation-behind-proxy
+- https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124
+- https://www.bookstack.cn/read/okd-4.12-en/14bea13e5cd9a170.md
+- https://docs.okd.io/4.9/installing/installing_bare_metal/installing-bare-metal-network-customizations.html
+~~~
+Table 11. Optional parameters
+Parameter	Description	Values
+additionalTrustBundle
+
+A PEM-encoded X.509 certificate bundle that is added to the nodes' trusted certificate store. This trust bundle may also be used when a proxy has been configured.
+String
+~~~
+- https://www.linuxsysadmins.com/okd-cluster-openshift-installation/
+- https://www.linuxsysadmins.com/okd-cluster-openshift-installation/
+- https://docs.openshift.com/container-platform/4.8/architecture/architecture-rhcos.html
+- https://gruuuuu.github.io/ocp/ocp4-install-baremetal/#
+
+
 
 ## Similar Playbook
 

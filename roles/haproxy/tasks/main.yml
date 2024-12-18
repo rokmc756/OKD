@@ -1,0 +1,30 @@
+---
+- name: Check OS ( HA Proxy )
+  fail: msg="Not a Red Hat based system!"
+  when: ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or ansible_os_family != 'Rocky'
+
+
+- name: Set Facts for Package Name and List and Network Range
+  import_tasks: set-haproxy-facts.yml
+  tags:
+    - install
+    - uninstall
+
+
+- name: Install HA Proxy
+  import_tasks: install.yml
+  tags: install
+  when: inventory_hostname in groups['lb']
+
+
+- name: Uninstall HA Proxy
+  import_tasks: uninstall.yml
+  tags: uninstall
+  when: inventory_hostname in groups['lb']
+
+
+- name: Upgrade HA Proxy
+  import_tasks: upgrade.yml
+  tags: upgrade
+  when: inventory_hostname in groups['lb']
+

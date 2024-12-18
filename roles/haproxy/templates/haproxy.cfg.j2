@@ -1,0 +1,75 @@
+global
+	log 127.0.0.1 local0 info
+	maxconn {{ global_max_connections }}
+	user {{ haproxy_user }}
+	group {{ haproxy_group }}
+	daemon
+	nbproc 1
+	# chroot /usr/local/haproxy
+	pidfile /var/run/haproxy.pid
+
+
+defaults
+	log global
+	mode tcp
+	option tcplog
+	option dontlognull
+	option redispatch
+	retries 3
+	maxconn {{ defaults_max_connections }}
+	timeout connect 10s
+	timeout client 60s
+	timeout server 60s
+
+
+# frontend fe-apiserver
+frontend apiserver
+	bind *:{{ frontend_port }}
+	mode tcp
+        option tcplog
+	default_backend {{ k8s.cluster_name }}
+
+
+listen  admin-stats
+	mode http
+	option httplog
+	bind *:{{ stats_port }}
+	stats enable
+	stats refresh 30s
+	stats uri /haproxy?stats
+        stats realm Kubernetes Haproxy\ Statistics  # Title Text for Popup Window
+        stats show-node
+        stats show-legends
+        stats show-desc Kubernetes Master Load Balancer Stats ( Master )
+	stats auth {{ stats_user }}:{{ stats_pass }}
+
+
+#	bind *:{{ k8s_apiserver_port }}
+#       default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+#	mode tcp
+#	option tcplog
+#	balance {{ balance_algorithm }}
+#listen  {{ k8s.cluster_name }}
+#	bind *:{{ k8s_apiserver_port }}
+#        default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+#        option httpchk GET /healtz
+#        http-check expect status 200
+#        mode tcp
+#        option tcp-check
+#        balance roundrobin
+#
+# backend apiserver
+
+backend {{ k8s.cluster_name }}
+        option httpchk GET /healtz
+        http-check expect status 200
+        mode tcp
+        option tcp-check
+        balance roundrobin
+        {% for h in groups['master'] %}
+            server {{ h }} {{ hostvars[h][_netdev]['ipv4']['address'] }}:6443 check
+        {% endfor %}
+        {% for h in groups['slaves'] %}
+            server {{ h }} {{ hostvars[h][_netdev]['ipv4']['address'] }}:6443 check
+        {% endfor %}
+

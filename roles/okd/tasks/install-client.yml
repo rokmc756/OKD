@@ -79,20 +79,33 @@
 
 
 - name: Create Directory for Ignition File
-  shell: |
-    mkdir {{ okd.base_path }}/okd4
-  register: create_ignition_file
-  args:
-    chdir: "{{ okd.base_path }}"
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-- debug: msg={{ create_ignition_file }}
+  file:
+    path: "{{ okd.base_path }}/okd4"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  register: create_ignition_dir
+- debug: msg={{ create_ignition_dir }}
   when: print_debug == true
+
+# sed -i 's~pullSecret:.*$~pullSecret: '"'"$(cat ./pullSecret.txt)"'"'~' install-config.yaml
+# sed -i 's~sshKey:.*$~sshKey: "'"$(cat ~/.ssh/id_rsa.pub)"'"~' install-config.yaml
 
 
 - name: Copy Config Files for Ignition File
   template:
     dest: "{{ okd.base_path }}/okd4/{{ item }}"
+    src: "{{ item }}.j2"
+  register: copy_ignition_file
+  with_items:
+    - "install-config.yaml"
+- debug: msg={{ copy_ignition_file }}
+
+
+- name: Copy Config Files for Ignition File
+  template:
+    dest: "{{ okd.base_path }}/{{ item }}"
     src: "{{ item }}.j2"
   register: copy_ignition_file
   with_items:
@@ -161,3 +174,18 @@
   when: print_debug == true
 
 
+# Verify that our API is resolvable from current shell.
+# If any of the DNS entries cannot be resolved,
+# the installation will fail. Ensure that DNS resolution issues are resolved before proceeding.
+
+#- name: Verify that our API is resolvable
+#  shell: |
+#    curl -v https://api.okd4.pivotal.io:6443
+#  register: verify_api_resolvable
+#  args:
+#    chdir: "{{ okd.base_path }}"
+#  environment:
+#    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#- debug: msg={{ verify_api_resolvable ]]
+#  when: print_debug == true
+#
