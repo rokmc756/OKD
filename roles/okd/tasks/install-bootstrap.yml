@@ -88,3 +88,12 @@
 
 - meta: flush_handlers
 
+
+# openshift-install --dir /root/okd4 wait-for bootstrap-complete --log-level=debug
+- name: Wait for Bootstrap Complete
+  shell: |
+    ssh -o StrictHostKeyChecking=no core@192.168.1.182 "journalctl -b -f -u release-image.service -u bootkube.service"
+  register: wait_for_bootstrap_complete
+- debug: msg={{ wait_for_bootstrap_complete }}
+  when: print_debug == true
+

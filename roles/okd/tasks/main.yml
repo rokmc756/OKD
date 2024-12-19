@@ -17,6 +17,30 @@
   when: install_network is defined and install_network == true
 
 
+- name: Install DNSMasq
+  import_tasks: install-dnsmasq.yml
+  tags: install
+  when: install_dnsmasq is defined and install_dnsmasq == true
+
+
+- name: Install Resolved
+  import_tasks: install-resolved.yml
+  tags: install
+  when: install_resolved is defined and install_resolved == true
+
+
+- name: Uninstall Resolved
+  import_tasks: uninstall-resolved.yml
+  tags: uninstall
+  when: uninstall_resolved is defined and uninstall_resolved == true
+
+
+- name: Uninstall DNSMasq
+  import_tasks: uninstall-dnsmasq.yml
+  tags: uninstall
+  when: uninstall_dnsmasq is defined and uninstall_dnsmasq == true
+
+
 - name: Uninstall Network
   import_tasks: uninstall-network.yml
   tags: uninstall
@@ -38,7 +62,7 @@
 - name: Install CoreOS BootStrap
   import_tasks: install-bootstrap.yml
   tags: install
-  when: install_bootstrap is defined and install_bootstrap == true and inventory_hostname in groups['bootstrap']
+  when: install_bootstrap is defined and install_bootstrap == true and inventory_hostname in groups['_bootstrap']
 
 
 - name: Install CoreOS Master

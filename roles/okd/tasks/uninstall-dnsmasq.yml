@@ -1,0 +1,69 @@
+---
+- name: Delete DNSMasq Server
+  lineinfile:
+    dest: "/etc/resolv.conf"
+    regexp: "^nameserver 127.0.0.1"
+    state: absent
+  register: delete_dnsmasq_server
+
+
+- name: Stop DNSMasq Service
+  systemd:
+    name: dnsmasq
+    state: stopped
+  register: stop_dnsmasq
+  ignore_errors: true
+  until: stop_dnsmasq is succeeded
+  retries: 10
+  delay: 10
+- debug: msg={{ stop_dnsmasq }}
+  when: print_debug == true
+
+
+# Change DNS setting
+# Replace device name or IP address to your environment
+- name: Rollback DNS Settings
+  shell: |
+    export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}' | sed 1d)
+    nmcli connection modify {{ item.conn_name }} ipv4.dns "$DNS"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "okd4.pivotal.io"
+    nmcli connection up {{ item.conn_name }}
+  register: rollback_dns_settings
+  with_items:
+    - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn1 }
+    - { dev_ip_addr: "{{ ipaddr1 }}", netdev_name: "{{ netdev1 }}", conn_name: conn2 }
+    - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn3 }
+- debug: msg={{ rollback_dns_settings }}
+  when: print_debug == true
+
+
+- name: Rollback Required Settings for OKD Cluster to Dnsmasq
+  lineinfile:
+    dest: "{{ item.file_name }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: add_required_config
+  ignore_errors: true
+  with_items:
+    - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain={{ okd.domain }}",         line: "^#domain=example.com",    state: present }
+    - { file_name: "/etc/dnsmasq.conf",   regexp: "^address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
+
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^interface={{ netdev1 }}",         line: "interface=lo",            state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^listen-address=*",    line: "#listen-address=",                    state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain-needed",                   line: "#domain-needed",          state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^bogus-priv",                      line: "#bogus-priv",             state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^strict-order",                    line: "#strict-order",           state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^expand-hosts",                    line: "#expand-hosts",           state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^no-resolv",                       line: "#no-resolv",              state: present }
+    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^port=53",                         line: "#port=5353",              state: present }
+
+
+- name: Uninstall DNSMaq Packages
+  package:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: true
+  with_items:
+    - "dnsmasq"
+

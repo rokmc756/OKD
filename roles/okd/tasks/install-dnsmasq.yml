@@ -1,0 +1,92 @@
+---
+- name: Install DNSMaq Package
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "bind-utils"
+    - "dnsmasq"
+
+
+- name: Add DNSMasq Host Entries
+  template:
+    dest: "/etc/dnsmasq.d/{{ item }}"
+    src: "{{ item }}.j2"
+  register: add_dnsmasq_host_entries
+  with_items:
+    - "addresses.conf"
+- debug: msg={{ add_dnsmasq_host_entries }}
+
+
+- name: Add Required Settings for OKD Cluster to Dnsmasq
+  lineinfile:
+    dest: "{{ item.file_name }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: add_required_config
+  with_items:
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#address=/double-click.net/127.0.0.1",  line: "address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#domain=example.com",  line: "domain={{ okd.domain }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#domain-needed",       line: "domain-needed",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#bogus-priv",          line: "bogus-priv",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#expand-hosts",        line: "expand-hosts",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^interface=lo",         line: "interface={{ netdev1 }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=127.0.0.1,{{ ipaddr1 }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#port=5353",           line: "port=53",  state: present }
+
+
+    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#no-resolv",           line: "no-resolv",  state: present }
+    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#strict-order",        line: "strict-order",  state: present }
+    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=::1,127.0.0.1,{{ ipaddr0 }},{{ ipaddr1 }},{{ ipaddr2 }}",  state: present }
+    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#addn-hosts=*",        line: "addn-host=/etc/dnsmasq.d/addresses.conf",  state: present }
+
+#addn-hosts=/etc/banner_add_hosts
+#
+
+- name: Configure DNSMasq Server
+  lineinfile:
+    dest: "/etc/resolv.conf"
+    line: "nameserver 127.0.0.1"
+    insertafter: '^search*'
+    state: present
+  register: config_dnsmasq_server
+
+
+- name: Restart DNSMasq Services
+  systemd:
+    name: "{{ item.service }}"
+    state: "{{ item.state }}"
+    enabled: true
+    daemon_reload: true
+  register: start_service
+  until: start_service is succeeded
+  retries: 10
+  delay: 10
+  with_items:
+    - { service: dnsmasq, state: restarted }
+- debug: msg={{ start_service }}
+  when: print_debug == true
+
+
+# Change DNS setting
+# Replace device name or IP address to your environment
+- name: CHange DNS Settings
+  shell: |
+    export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
+    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ manager_ipaddr1 }} $DNS"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ okd.domain }}"
+    nmcli connection up {{ item.conn_name }}
+  register: config_dns_settings
+  with_items:
+    - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn1 }
+    - { dev_ip_addr: "{{ ipaddr1 }}", netdev_name: "{{ netdev1 }}", conn_name: conn2 }
+    - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn3 }
+- debug: msg={{ config_dns_settings }}
+  when: print_debug == true
+
+
+# https://www.ask-sheldon.com/run-dnsmasq-as-a-local-dns-server-arch-linux/
+# https://wiki.archlinux.org/title/Dnsmasq
+# https://access.redhat.com/solutions/2189401
+
