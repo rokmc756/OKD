@@ -4,6 +4,7 @@ remote_machine_username="jomoon"
 remote_machine_password="changeme"
 ansible_python_interpreter=/usr/bin/python3
 
+
 [manager]
 mgr             ansible_ssh_host=192.168.1.181
 
@@ -11,4 +12,3 @@ mgr             ansible_ssh_host=192.168.1.181
 [compute]
 worker-0        ansible_ssh_host=192.168.1.186
 worker-1        ansible_ssh_host=192.168.1.187
-

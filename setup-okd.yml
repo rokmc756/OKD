@@ -3,7 +3,7 @@
   become: yes
   vars:
     print_debug: true
-    download_client: false
+    download_client: true
   roles:
     - okd
 

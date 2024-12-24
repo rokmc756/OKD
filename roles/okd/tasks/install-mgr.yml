@@ -21,11 +21,11 @@
 
 - name: Add NGINX Config Lines to the End
   template:
-    dest: "/etc/nginx/{{ item }}"
-    src: "{{ item }}.j2"
+    dest: "/etc/nginx/{{ item }}.conf"
+    src: "{{ item }}-worker.conf.j2"
   register: add_nginx_config_lines
   with_items:
-    - "okd-mgr-nginx.conf"
+    - "okd-mgr-nginx"
 - debug: msg={{ add_nginx_config_lines }}
 
 

@@ -36,6 +36,7 @@
 - name: Define OKD Version
   set_fact:
     okd_version: "{{ okd.major_version }}.{{ okd.minor_version }}.{{ okd.patch_version }}-{{ okd.build_version }}.okd-{{ okd.release_date }}"
+    # okd_version: "{{ okd.major_version }}.{{ okd.minor_version }}.{{ okd.patch_version }}-okd-{{ okd.release_date }}"
 
 
 
@@ -128,5 +129,60 @@
 #    cni_mtu: "{{ k8s.cni.kube_flannel.mtu }}"
 #  when: k8s.cni.kube_flannel.install == true
 
+
+#- block:
+#  - hosts: localhost
+#    gather_facts: no
+#    connection: local
+#    tasks:
+#      - name: Display destinationFile contents
+#        command: cat "/home/jomoon/secret-infos/okd-pull-secret.key"
+#        register: okd_pull_secret
+#      - debug: "{{ okd_pull_secret.stdout }}"
+#      # become_user: "{{ SSH_USER }}"
+
+
+#    - command: /root/complex_script.sh
+#      register: result
+#    - set_fact:
+#        my_server_list: "{{ hostvars|json_query('*.result.stdout') }}"
+#      run_once: true
+#      delegate_to: localhost
+#      delegate_facts: true
+
+
+- name: Get OKD Pull Secret
+  command: cat {{ okd.local_home_dir }}/secret-infos/okd-pull-secret.key
+  register: okd_pull_secret
+  delegate_to: localhost
+  delegate_facts: true
+  when: inventory_hostname in groups['manager']
+- debug: msg={{ okd_pull_secret.stdout | string }}
+  when: inventory_hostname in groups['manager']
+
+
+- name: Get Local SSH Key Secret
+  command: cat {{ okd.local_home_dir }}/.ssh/id_rsa.pub
+  register: local_ssh_key_secret
+  delegate_to: localhost
+  delegate_facts: true
+  when: inventory_hostname in groups['manager']
+- debug: msg={{ local_ssh_key_secret.stdout | string }}
+  when: inventory_hostname in groups['manager']
+
+
+- name: Get Manager SSH Key Secret
+  command: cat {{ okd.base_path }}/.ssh/id_rsa.pub
+  register: mgr_ssh_key_secret
+  when: inventory_hostname in groups['manager']
+- debug: msg={{ mgr_ssh_key_secret.stdout  }}
+  when: inventory_hostname in groups['manager']
+
+
+- set_fact:
+    okd_pull_secret: "{{ okd_pull_secret.stdout | string }}"
+    local_ssh_key_secret: "{{ local_ssh_key_secret.stdout | string }}"
+    mgr_ssh_key_secret: "{{ mgr_ssh_key_secret.stdout  }}"
+  when: inventory_hostname in groups['manager']
 
 

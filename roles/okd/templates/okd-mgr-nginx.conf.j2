@@ -1,0 +1,53 @@
+stream {
+    upstream k8s-api {
+{% for h in groups["_bootstrap"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:6443;     # BootStrap
+{% endfor %}
+{% for h in groups["master"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:6443;     # Master Node
+{% endfor %}
+    }
+    upstream machine-config {
+{% for h in groups["_bootstrap"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:22623;    # BootStrap
+{% endfor %}
+{% for h in groups["master"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:22623;    # Master Node
+{% endfor %}
+    }
+    upstream ingress-http {
+{% for h in groups["master"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:80;       # Master Nodes
+{% endfor %}
+    }
+    upstream ingress-https {
+{% for h in groups["master"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:443;      # Master Nodes
+{% endfor %}
+    }
+    upstream ingress-health {
+{% for h in groups["master"] %}
+        server {{ hostvars[h][_netdev]['ipv4']['address'] }}:1936;     # Master Nodes
+{% endfor %}
+    }
+    server {
+        listen 6443;
+        proxy_pass k8s-api;
+    }
+    server {
+        listen 22623;
+        proxy_pass machine-config;
+    }
+    server {
+        listen 80;
+        proxy_pass ingress-http;
+    }
+    server {
+        listen 443;
+        proxy_pass ingress-https;
+    }
+    server {
+        listen 1936;
+        proxy_pass ingress-health;
+    }
+}

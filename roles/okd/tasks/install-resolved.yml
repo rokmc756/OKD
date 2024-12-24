@@ -1,5 +1,5 @@
 ---
-- name: Install DNSMaq Package
+- name: Install Systemd Resolved Package
   package:
     name: "{{ item }}"
     state: present
@@ -8,7 +8,7 @@
     - "systemd-resolved"
 
 
-- name: Add Required Settings for OKD Cluster to Dnsmasq
+- name: Add Required Settings for OKD Cluster to Systemd Resolved
   lineinfile:
     dest: "{{ item.file_name }}"
     regexp: "{{ item.regexp }}"

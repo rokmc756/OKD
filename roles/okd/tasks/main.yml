@@ -88,3 +88,9 @@
   tags: uninstall
   when: uninstall_mgr is defined and uninstall_mgr == true and inventory_hostname in groups['manager']
 
+
+- name: Back to CentOS
+  import_tasks: back-to-centos.yml
+  tags: config
+  when: back_to_centos is defined and back_to_centos == true and inventory_hostname in groups['master']
+

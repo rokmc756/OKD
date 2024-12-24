@@ -6,24 +6,6 @@
   with_items:
     - "coreos-installer"
 
-# openssl passwd -1
-#Password: changeme
-#Verifying - Password: changeme
-#$1$Zzh8f5xO$9r/7462gd8w.S8qmoPZ7d0
-
-
-#- name: Copy Iginition Json Template
-#  template:
-#    src: "{{ item }}.j2"
-#    dest: "{{ okd.base_path }}/{{ item }}"
-#    owner: root
-#    group: root
-#    mode: 0755
-#  register: copy_ignition_json_temp
-#  with_items:
-#    - "ignition.json"
-#- debug: msg={{ copy_ignition_json_temp }}
-
 
 - name: Install Fedora CoreOS Boot Strap to Local NVME Drive
   shell: |
@@ -32,7 +14,6 @@
   register: install_coreos_bootstrap_local_drive
 - debug: msg={{ install_coreos_bootstrap_local_drive }}
   when: print_debug == true
-  # --ignition-url=http://192.168.1.181:8080/user.ign --insecure-ignition --copy-network
 
 
 - name: Copy CoreOS Boot Entry for 1st NVME Disk
@@ -60,7 +41,7 @@
     - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"Fedora CoreOS\"", dest: "/etc/default/grub", state: present }
 - debug: msg={{ change_default_boot_entry }}
   when: print_debug == true
-#  - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"saved\"", dest: "/etc/default/grub", state: present }
+  # "GRUB_DEFAULT=\"saved\""
 
 
 - name: Install Fedora CoreOS Boot Strap to Local NVME Drive
@@ -89,11 +70,17 @@
 - meta: flush_handlers
 
 
+#
 # openshift-install --dir /root/okd4 wait-for bootstrap-complete --log-level=debug
-- name: Wait for Bootstrap Complete
-  shell: |
-    ssh -o StrictHostKeyChecking=no core@192.168.1.182 "journalctl -b -f -u release-image.service -u bootkube.service"
-  register: wait_for_bootstrap_complete
-- debug: msg={{ wait_for_bootstrap_complete }}
-  when: print_debug == true
+# - name: Wait for Bootstrap Complete
+#  shell: |
+#    ssh -o StrictHostKeyChecking=no core@192.168.1.182 "journalctl -b -f -u release-image.service -u bootkube.service"
+# ssh -o StrictHostKeyChecking=no core@192.168.1.182 "journalctl -b -u release-image.service -u bootkube.service"
+# ~~ snip
+# Dec 21 03:45:16 localhost.localdomain systemd[1]: Finished release-image.service - Download the OpenShift Release Image.
+#
+#  register: wait_for_bootstrap_complete
+#- debug: msg={{ wait_for_bootstrap_complete }}
+#  when: print_debug == true
+
 

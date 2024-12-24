@@ -26,16 +26,6 @@
   when: print_debug == true and download_client == false
 
 
-#- name: Check if OpenShift Clients Exists
-#  stat: path=/usr/local/bin/{{ item }}
-#  register: okd_clients_bin_exists
-#  with_items:
-#    - openshift-client-linux
-#    - openshift-install-linux
-#- debug: msg={{ okd_clients_bin_exists }}
-#  when: print_debug == true
-
-
 - name: Extract OpenShift Clients
   unarchive:
     src: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
@@ -48,10 +38,8 @@
   with_items:
     - openshift-client-linux
     - openshift-install-linux
-  # when: okd_clients_bin_exists.stat.exists == false and upload_okd_clients == true
 - debug: msg={{ extract_okd_install_clients }}
   when: print_debug == true
-  # when: print_debug == true and okd_clients_bin_exists.stat.exists == false and upload_okd_clients == true
 
 
 - name: Set SELinux Policy
@@ -88,19 +76,19 @@
   register: create_ignition_dir
 - debug: msg={{ create_ignition_dir }}
   when: print_debug == true
-
 # sed -i 's~pullSecret:.*$~pullSecret: '"'"$(cat ./pullSecret.txt)"'"'~' install-config.yaml
 # sed -i 's~sshKey:.*$~sshKey: "'"$(cat ~/.ssh/id_rsa.pub)"'"~' install-config.yaml
 
 
 - name: Copy Config Files for Ignition File
   template:
-    dest: "{{ okd.base_path }}/okd4/{{ item }}"
-    src: "{{ item }}.j2"
+    dest: "{{ okd.base_path }}/okd4/{{ item }}.yaml"
+    src: "{{ item }}.yaml.j2"
   register: copy_ignition_file
   with_items:
-    - "install-config.yaml"
+    - "install-config"
 - debug: msg={{ copy_ignition_file }}
+  # src: "{{ item }}-working.yaml.j2"
 
 
 - name: Copy Config Files for Ignition File

@@ -1,0 +1,13 @@
+{
+  "ignition": {
+    "version": "3.2.0"
+  },
+  "networkd": {
+    "units": [
+      {
+        "name": "00-ens224.network",
+        "contents": "[Match]\nName=ens224\n\n[Network]\nAddress=192.168.1.183/24\nGateway=192.168.1.1\nDNS=192.168.0.90\n"
+      }
+    ]
+  }
+}

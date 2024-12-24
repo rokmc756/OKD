@@ -1,0 +1,46 @@
+{
+  "ignition": {
+    "version": "3.2.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+	"create": {
+	  "groups": [
+	    "sudo",
+	    "wheel",
+	    "docker"
+	  ],
+	  "shell": "/bin/bash" 
+	},
+        "passwordHash": "",
+        # openssl passwd -1 changeme
+        # openssl passwd -salt changeme -1 changeme
+        "ssh_authorized_key": [ 
+          "{{ remote_ssh_key_secret }}",
+          "{{ mgr_ssh_key_secret }}"
+	]
+      },
+      {
+        "name": "jomoon",
+	"create": {
+	  "homeDir": "/home/jomoon",
+	  "groups": [
+	    "sudo",
+            "wheel",
+	    "docker"
+       	  ],
+	  "shell": "/bin/bash" 
+	},
+        "passwordHash": "",
+        # openssl passwd -1 changeme
+        # openssl passwd -salt changeme -1 changeme
+        "ssh_authorized_key": [ 
+          "{{ remote_ssh_key_secret }}",
+          "{{ mgr_ssh_key_secret }}"
+	]
+      }
+    ]
+  }
+}
