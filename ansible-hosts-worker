@@ -10,5 +10,5 @@ mgr             ansible_ssh_host=192.168.1.181
 
 
 [compute]
-worker-0        ansible_ssh_host=192.168.1.186
-worker-1        ansible_ssh_host=192.168.1.187
+worker-2        ansible_ssh_host=192.168.1.187
+

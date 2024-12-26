@@ -6,4 +6,3 @@
     download_client: true
   roles:
     - okd
-

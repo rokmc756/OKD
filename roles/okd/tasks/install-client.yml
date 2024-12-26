@@ -1,5 +1,5 @@
 ---
-- name: Download OpenShift Clients
+- name: Download OpenShift Install Clients
   get_url:
     url: "{{ okd.download_url }}/{{ okd_version }}/{{ item }}-{{ okd_version }}.tar.gz"
     dest: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
@@ -10,23 +10,25 @@
   with_items:
     - openshift-client-linux
     - openshift-install-linux
+    - ccoctl-linux
   when: download_client == true
 - debug: msg={{ download_okd_install_clients }}
   when: print_debug == true and download_client == true
 
 
-- name: Upload OpenShift Clients
+- name: Upload OpenShift Install Clients
   copy: src={{ item }}-{{ okd_version }}.tar.gz dest={{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz mode=0644 owner=root group=root
   register: upload_okd_install_clients
   with_items:
     - openshift-client-linux
     - openshift-install-linux
+    - ccoctl-linux
   when: download_client == false
 - debug: msg={{ upload_okd_install_clients }}
   when: print_debug == true and download_client == false
 
 
-- name: Extract OpenShift Clients
+- name: Extract OpenShift Install Clients
   unarchive:
     src: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
     dest: "/usr/local/bin/"
@@ -38,6 +40,7 @@
   with_items:
     - openshift-client-linux
     - openshift-install-linux
+    - ccoctl-linux
 - debug: msg={{ extract_okd_install_clients }}
   when: print_debug == true
 
@@ -176,4 +179,4 @@
 #    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 #- debug: msg={{ verify_api_resolvable ]]
 #  when: print_debug == true
-#
+

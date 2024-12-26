@@ -78,6 +78,7 @@
     - oc
     - kubectl
     - openshift-install
+    - ccoctl
 - debug: msg={{ delete_okd_client_bin }}
   when: print_debug == true
 
@@ -91,6 +92,7 @@
   with_items:
     - openshift-client-linux
     - openshift-install-linux
+    - ccoctl-linux
 - debug: msg={{ delete_okd_client_archieves }}
   when: print_debug == true
 

@@ -1,0 +1,14 @@
+
+oc version 
+
+echo ""
+
+echo "All Running: $(oc get pods -A | sed 1d | grep Running | wc -l)"
+echo "All Not Running: $(oc get pods -A | sed 1d | grep -v Running | wc -l)"
+echo "ContainerCreating: $(oc get pods -A | sed 1d | grep -v Running | grep ContainerCreating | wc -l)"
+echo "CrashLoopBackOff: $(oc get pods -A | sed 1d | grep -v Running | grep CrashLoopBackOff | wc -l)"
+echo "Pending: $(oc get pods -A | sed 1d | grep -v Running | grep Pending | wc -l)"
+
+echo ""
+
+oc get nodes
