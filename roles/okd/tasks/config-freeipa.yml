@@ -1,0 +1,179 @@
+---
+- name: X
+  shell: |
+    echo "changeme" | kinit admin
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    klist
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+  # ldapsearch -Y GSSAPI '(&(ipaConfigString=enabledService)(ipaConfigString=dnssecKeyMaster))'
+
+
+- name: X
+  shell: |
+    ipa dnszone-find
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnszone-show okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+# ipa dnszone-mod ipa.example --dnssec=1
+- name: Use Command to Enable DNSSEC Signing for Given Zone
+  shell: |
+    ipa dnszone-add okd5.pivotal.io
+    ipa dnszone-add 2.168.192.in-addr.arpa
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+# DNSSEC key master services are not running
+# Run ipactl status on the DNSSEC key master and check that all services are running: All services should be in state RUNNING except
+# ipa-ods-exporter service which is run only on-demand.
+
+
+#- name: X
+#  shell: |
+#    ipa dnsrecord-find okd5.pivotal.io. --name master-1
+#  register: X
+#  ignore_errors: true
+#- debug: msg={{ X }}
+#  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. api --a-rec 192.168.2.181
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 181 --ptr-rec api.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. api-int --a-rec 192.168.2.181
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 181 --ptr-rec api-int.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. bootstrap --a-rec 192.168.2.182
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 182 --ptr-rec bootstrap.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. master-1 --a-rec 192.168.2.183
+    ipa dnsrecord-add okd5.pivotal.io. etcd-1 --a-rec 192.168.2.183
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 183 --ptr-rec master-1.okd5.pivotal.io.
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 183 --ptr-rec etcd-1.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. master-2 --a-rec 192.168.2.184
+    ipa dnsrecord-add okd5.pivotal.io. etcd-2 --a-rec 192.168.2.184
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 184 --ptr-rec master-2.okd5.pivotal.io.
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 184 --ptr-rec etcd-2.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. master-3 --a-rec 192.168.2.185
+    ipa dnsrecord-add okd5.pivotal.io. etcd-3 --a-rec 192.168.2.185
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 185 --ptr-rec master-3.okd5.pivotal.io.
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 185 --ptr-rec etcd-3.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.183
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 183 --ptr-rec _etcd-server-ssl._tcp.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.184
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 184 --ptr-rec _etcd-server-ssl._tcp.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.185
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 185 --ptr-rec _etcd-server-ssl._tcp.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. worker-1 --a-rec 192.168.2.186
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 186 --ptr-rec master-3.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+
+- name: X
+  shell: |
+    ipa dnsrecord-add okd5.pivotal.io. worker-2 --a-rec 192.168.2.187
+    ipa dnsrecord-add 2.168.192.in-addr.arpa 187 --ptr-rec master-3.okd5.pivotal.io.
+  register: X
+  ignore_errors: true
+- debug: msg={{ X }}
+  when: print_debug == true
+
+

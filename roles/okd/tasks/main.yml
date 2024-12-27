@@ -77,6 +77,12 @@
   when: install_worker is defined and install_worker == true and inventory_hostname in groups['compute']
 
 
+- name: Config DNS Zone and Record
+  import_tasks: config-freeipa.yml
+  tags: config
+  when: config_freeipa is defined and config_freeipa == true and inventory_hostname in groups['dns']
+
+
 - name: Uninstall OKD Install Cleint
   import_tasks: uninstall-client.yml
   tags: uninstall
@@ -93,4 +99,10 @@
   import_tasks: back-to-centos.yml
   tags: config
   when: back_to_centos is defined and back_to_centos == true and inventory_hostname in groups['master']
+
+
+- name: Remove DNS Zone and Record
+  import_tasks: remove-freeipa.yml
+  tags: remove
+  when: remove_freeipa is defined and remove_freeipa == true and inventory_hostname in groups['dns']
 
