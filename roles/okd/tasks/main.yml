@@ -9,44 +9,14 @@
   tags: install, uninstall, deploy, destory, setup, remove
 
 
-- name: Setup Network
-  import_tasks: install-network.yml
-  tags: setup, install
-  when: ( network is defined and network == true )
-
-
-- name: Setup DNSMasq
-  import_tasks: setup-dnsmasq.yml
-  tags: setup, install
-  when: ( dnsmasq is defined and dnsmasq == true )
-
-
-- name: Setup Resolved
-  import_tasks: setup-resolved.yml
-  tags: setup, install
-  when: ( resolved is defined and resolved == true )
-
-
-- name: Remove Resolved
-  import_tasks: remove-resolved.yml
-  tags: remove, uninstall
-  when: ( resolved is defined and resolved == true )
-
-
-- name: Remove DNSMasq
-  import_tasks: remove-dnsmasq.yml
-  tags: remove, uninstall
-  when: ( dnsmasq is defined and dnsmasq == true )
-
-
-- name: Remove Network
-  import_tasks: remove-network.yml
-  tags: remove, uninstall
-  when: ( network is defined and network == true )
+- name: Import OKD DNS Playbook
+  import_tasks: dns/main.yml
+  tags: setup, remove
+  when: ( dns is defined and dns == true )
 
 
 - name: Setup OKD Manager
-  import_tasks: install-mgr.yml
+  import_tasks: setup-mgr.yml
   tags: setup, install
   when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 
@@ -57,28 +27,22 @@
   when: ( client is defined and client == true ) and inventory_hostname in groups['manager']
 
 
-- name: Install CoreOS BootStrap
+- name: Deploy CoreOS BootStrap
   import_tasks: install-bootstrap.yml
-  tags: setup, install
+  tags: deploy, setup, install
   when: ( bootstrap is defined and bootstrap == true ) and inventory_hostname in groups['_bootstrap']
 
 
-- name: Install CoreOS Master
+- name: Deploy CoreOS Master
   import_tasks: install-master.yml
-  tags: install
+  tags: deploy, setup, install
   when: ( master is defined and master == true ) and inventory_hostname in groups['master']
 
 
-- name: Install CoreOS Worker
+- name: Deploy CoreOS Worker
   import_tasks: install-worker.yml
-  tags: install
+  tags: deploy, setup, install
   when: ( worker is defined and worker == true ) and inventory_hostname in groups['compute']
-
-
-- name: Config DNS Zone and Record
-  import_tasks: config-freeipa.yml
-  tags: config
-  when: ( freeipa is defined and freeipa == true ) and inventory_hostname in groups['dns']
 
 
 - name: Uninstall OKD Install Cleint
@@ -87,9 +51,9 @@
   when: ( client is defined and client == true ) and inventory_hostname in groups['manager']
 
 
-- name: Uninstall OKD Manager
+- name: Destroy OKD Manager
   import_tasks: uninstall-mgr.yml
-  tags: uninstall
+  tags: destroy, remove, delete, uninstall
   when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 
 
@@ -97,6 +61,12 @@
   import_tasks: back-to-centos.yml
   tags: config, return
   when: ( centos is defined and centos == true ) and inventory_hostname in groups['master']
+
+
+- name: Setup DNS Zone and Record
+  import_tasks: setup-freeipa.yml
+  tags: setup, config
+  when: ( freeipa is defined and freeipa == true ) and inventory_hostname in groups['dns']
 
 
 - name: Remove DNS Zone and Record

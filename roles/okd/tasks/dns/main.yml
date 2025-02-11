@@ -1,0 +1,24 @@
+---
+- name: Setup DNSMasq
+  import_tasks: dns/setup-dnsmasq.yml
+  tags: setup, install
+  when: ( dnsmasq is defined and dnsmasq == true )
+
+
+- name: Remove DNSMasq
+  import_tasks: dns/remove-dnsmasq.yml
+  tags: remove, uninstall
+  when: ( dnsmasq is defined and dnsmasq == true )
+
+
+- name: Setup Resolved
+  import_tasks: dns/setup-resolved.yml
+  tags: setup, install
+  when: ( resolved is defined and resolved == true )
+
+
+- name: Remove Resolved
+  import_tasks: dns/remove-resolved.yml
+  tags: remove, uninstall
+  when: ( resolved is defined and resolved == true )
+

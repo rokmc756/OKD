@@ -11,9 +11,9 @@
     - openshift-client-linux
     - openshift-install-linux
     - ccoctl-linux
-  when: download_client == true
+  when: _okd.download_client == true
 - debug: msg={{ download_okd_install_clients }}
-  when: print_debug == true and download_client == true
+  when: print_debug == true and _okd.download_client == true
 
 
 - name: Upload OpenShift Install Clients
@@ -23,9 +23,9 @@
     - openshift-client-linux
     - openshift-install-linux
     - ccoctl-linux
-  when: download_client == false
+  when: _okd.download_client == false
 - debug: msg={{ upload_okd_install_clients }}
-  when: print_debug == true and download_client == false
+  when: print_debug == true and _okd.download_client == false
 
 
 - name: Extract OpenShift Install Clients
@@ -126,7 +126,6 @@
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ create_okd_ignition_configs }}
   when: print_debug == true
-
 
 
 - name: Copy Ignition File

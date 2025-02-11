@@ -1,162 +1,147 @@
 ---
-# 13
-- name: X
+- name: Login Kerberos
   shell: |
     echo "changeme" | kinit admin
-  register: X
+  register: login_krb5
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ login_krb5 }}
   when: print_debug == true
 
-# 12
-- name: X
+
+- name: List Kerberos Users
   shell: |
     klist
-  register: X
+  register: list_krb5_users
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ list_krb5_users }}
   when: print_debug == true
   # ldapsearch -Y GSSAPI '(&(ipaConfigString=enabledService)(ipaConfigString=dnssecKeyMaster))'
 
 
-
-# 1
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. worker-2 --a-rec 192.168.2.187
+    ipa dnsrecord-del okd5.pivotal.io. worker-2 --a-rec 192.168.2.167
     ipa dnsrecord-del 2.168.192.in-addr.arpa 187 --ptr-rec master-3.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 2
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. worker-1 --a-rec 192.168.2.186
+    ipa dnsrecord-del okd5.pivotal.io. worker-1 --a-rec 192.168.2.176
     ipa dnsrecord-del 2.168.192.in-addr.arpa 186 --ptr-rec master-3.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 3
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.185
+    ipa dnsrecord-del okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.175
     ipa dnsrecord-del 2.168.192.in-addr.arpa 185 --ptr-rec _etcd-server-ssl._tcp.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 3
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.184
+    ipa dnsrecord-del okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.174
     ipa dnsrecord-del 2.168.192.in-addr.arpa 184 --ptr-rec _etcd-server-ssl._tcp.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 3
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.183
+    ipa dnsrecord-del okd5.pivotal.io. _etcd-server-ssl._tcp --a-rec 192.168.2.173
     ipa dnsrecord-del 2.168.192.in-addr.arpa 183 --ptr-rec _etcd-server-ssl._tcp.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 3
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. master-3 --a-rec 192.168.2.185
-    ipa dnsrecord-del okd5.pivotal.io. etcd-3 --a-rec 192.168.2.185
+    ipa dnsrecord-del okd5.pivotal.io. master-3 --a-rec 192.168.2.175
+    ipa dnsrecord-del okd5.pivotal.io. etcd-3 --a-rec 192.168.2.175
     ipa dnsrecord-del 2.168.192.in-addr.arpa 185 --ptr-rec master-3.okd5.pivotal.io.
     ipa dnsrecord-del 2.168.192.in-addr.arpa 185 --ptr-rec etcd-3.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 4
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. master-2 --a-rec 192.168.2.184
-    ipa dnsrecord-del okd5.pivotal.io. etcd-2 --a-rec 192.168.2.184
+    ipa dnsrecord-del okd5.pivotal.io. master-2 --a-rec 192.168.2.174
+    ipa dnsrecord-del okd5.pivotal.io. etcd-2 --a-rec 192.168.2.174
     ipa dnsrecord-del 2.168.192.in-addr.arpa 184 --ptr-rec master-2.okd5.pivotal.io.
     ipa dnsrecord-del 2.168.192.in-addr.arpa 184 --ptr-rec etcd-2.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 5
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. master-1 --a-rec 192.168.2.183
-    ipa dnsrecord-del okd5.pivotal.io. etcd-1 --a-rec 192.168.2.183
+    ipa dnsrecord-del okd5.pivotal.io. master-1 --a-rec 192.168.2.173
+    ipa dnsrecord-del okd5.pivotal.io. etcd-1 --a-rec 192.168.2.173
     ipa dnsrecord-del 2.168.192.in-addr.arpa 183 --ptr-rec master-1.okd5.pivotal.io.
     ipa dnsrecord-del 2.168.192.in-addr.arpa 183 --ptr-rec etcd-1.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 6
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. bootstrap --a-rec 192.168.2.182
+    ipa dnsrecord-del okd5.pivotal.io. bootstrap --a-rec 192.168.2.172
     ipa dnsrecord-del 2.168.192.in-addr.arpa 182 --ptr-rec bootstrap.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 7
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. api-int --a-rec 192.168.2.181
+    ipa dnsrecord-del okd5.pivotal.io. api-int --a-rec 192.168.2.171
     ipa dnsrecord-del 2.168.192.in-addr.arpa 181 --ptr-rec api-int.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-# 8
-- name: X
+- name: Delete DNS Records
   shell: |
-    ipa dnsrecord-del okd5.pivotal.io. api --a-rec 192.168.2.181
+    ipa dnsrecord-del okd5.pivotal.io. api --a-rec 192.168.2.171
     ipa dnsrecord-del 2.168.192.in-addr.arpa 181 --ptr-rec api.okd5.pivotal.io.
-  register: X
+  register: delete_dns_records
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_records }}
   when: print_debug == true
 
 
-
-# 9
 # ipa dnszone-mod ipa.example --dnssec=1
-- name: Use Command to Enable DNSSEC Signing for Given Zone
+- name: Delete DNS Zones
   shell: |
     ipa dnszone-del 2.168.192.in-addr.arpa
     ipa dnszone-del okd5.pivotal.io
-  register: X
+  register: delete_dns_zone
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ delete_dns_zone }}
   when: print_debug == true
 
 
@@ -165,32 +150,29 @@
 # ipa-ods-exporter service which is run only on-demand.
 
 
-#- name: X
+#- name: Find DNS Records
 #  shell: |
 #    ipa dnsrecord-find okd5.pivotal.io. --name master-1
-#  register: X
+#  register: find_dns_records
 #  ignore_errors: true
-#- debug: msg={{ X }}
+#- debug: msg={{ find_dns_records }}
 #  when: print_debug == true
 
 
-# 10
-- name: X
+- name: Show DNS Zones
   shell: |
     ipa dnszone-show okd5.pivotal.io.
-  register: X
+  register: show_dns_zones
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ show_dns_zones }}
   when: print_debug == true
 
 
-# 11
-- name: X
+- name: Find DNS Zones
   shell: |
     ipa dnszone-find
-  register: X
+  register: find_dns_zones
   ignore_errors: true
-- debug: msg={{ X }}
+- debug: msg={{ find_dns_zones }}
   when: print_debug == true
-
 
