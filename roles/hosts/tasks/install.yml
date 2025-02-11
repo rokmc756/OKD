@@ -10,11 +10,12 @@
 
 - name: Enable Development Package Repository for RedHat Based Linux Distribution
   shell: |
-    yum-config-manager --enable {{ item }}
+    dnf config-manager --enable {{ item }}
   ignore_errors: true
   with_items:
     - "devel"
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
+  when: ansible_distribution == "RedHat" or ansible_distribution == "Rocky"
+  # when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
 
 
 - name: Install Prerequest Software Packages

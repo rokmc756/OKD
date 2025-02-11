@@ -6,103 +6,101 @@
 
 - name: Set Facts For Network and Packages Informations
   import_tasks: set-okd-facts.yml
-  tags:
-    - install
-    - uninstall
+  tags: install, uninstall, deploy, destory, setup, remove
 
 
-- name: Install Network
+- name: Setup Network
   import_tasks: install-network.yml
-  tags: install
-  when: install_network is defined and install_network == true
+  tags: setup, install
+  when: ( network is defined and network == true )
 
 
-- name: Install DNSMasq
-  import_tasks: install-dnsmasq.yml
-  tags: install
-  when: install_dnsmasq is defined and install_dnsmasq == true
+- name: Setup DNSMasq
+  import_tasks: setup-dnsmasq.yml
+  tags: setup, install
+  when: ( dnsmasq is defined and dnsmasq == true )
 
 
-- name: Install Resolved
-  import_tasks: install-resolved.yml
-  tags: install
-  when: install_resolved is defined and install_resolved == true
+- name: Setup Resolved
+  import_tasks: setup-resolved.yml
+  tags: setup, install
+  when: ( resolved is defined and resolved == true )
 
 
-- name: Uninstall Resolved
-  import_tasks: uninstall-resolved.yml
-  tags: uninstall
-  when: uninstall_resolved is defined and uninstall_resolved == true
+- name: Remove Resolved
+  import_tasks: remove-resolved.yml
+  tags: remove, uninstall
+  when: ( resolved is defined and resolved == true )
 
 
-- name: Uninstall DNSMasq
-  import_tasks: uninstall-dnsmasq.yml
-  tags: uninstall
-  when: uninstall_dnsmasq is defined and uninstall_dnsmasq == true
+- name: Remove DNSMasq
+  import_tasks: remove-dnsmasq.yml
+  tags: remove, uninstall
+  when: ( dnsmasq is defined and dnsmasq == true )
 
 
-- name: Uninstall Network
-  import_tasks: uninstall-network.yml
-  tags: uninstall
-  when: uninstall_network is defined and uninstall_network == true
+- name: Remove Network
+  import_tasks: remove-network.yml
+  tags: remove, uninstall
+  when: ( network is defined and network == true )
 
 
-- name: Prepare OKD Manager
+- name: Setup OKD Manager
   import_tasks: install-mgr.yml
-  tags: install
-  when: install_mgr is defined and install_mgr == true and inventory_hostname in groups['manager']
+  tags: setup, install
+  when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 
 
 - name: Install OKD Install Cleint
   import_tasks: install-client.yml
-  tags: install
-  when: install_client is defined and install_client == true and inventory_hostname in groups['manager']
+  tags: setup, install
+  when: ( client is defined and client == true ) and inventory_hostname in groups['manager']
 
 
 - name: Install CoreOS BootStrap
   import_tasks: install-bootstrap.yml
-  tags: install
-  when: install_bootstrap is defined and install_bootstrap == true and inventory_hostname in groups['_bootstrap']
+  tags: setup, install
+  when: ( bootstrap is defined and bootstrap == true ) and inventory_hostname in groups['_bootstrap']
 
 
 - name: Install CoreOS Master
   import_tasks: install-master.yml
   tags: install
-  when: install_master is defined and install_master == true and inventory_hostname in groups['master']
+  when: ( master is defined and master == true ) and inventory_hostname in groups['master']
 
 
 - name: Install CoreOS Worker
   import_tasks: install-worker.yml
   tags: install
-  when: install_worker is defined and install_worker == true and inventory_hostname in groups['compute']
+  when: ( worker is defined and worker == true ) and inventory_hostname in groups['compute']
 
 
 - name: Config DNS Zone and Record
   import_tasks: config-freeipa.yml
   tags: config
-  when: config_freeipa is defined and config_freeipa == true and inventory_hostname in groups['dns']
+  when: ( freeipa is defined and freeipa == true ) and inventory_hostname in groups['dns']
 
 
 - name: Uninstall OKD Install Cleint
   import_tasks: uninstall-client.yml
-  tags: uninstall
-  when: uninstall_client is defined and uninstall_client == true and inventory_hostname in groups['manager']
+  tags: delete, remove, uninstall
+  when: ( client is defined and client == true ) and inventory_hostname in groups['manager']
 
 
 - name: Uninstall OKD Manager
   import_tasks: uninstall-mgr.yml
   tags: uninstall
-  when: uninstall_mgr is defined and uninstall_mgr == true and inventory_hostname in groups['manager']
+  when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 
 
 - name: Back to CentOS
   import_tasks: back-to-centos.yml
-  tags: config
-  when: back_to_centos is defined and back_to_centos == true and inventory_hostname in groups['master']
+  tags: config, return
+  when: ( centos is defined and centos == true ) and inventory_hostname in groups['master']
 
 
 - name: Remove DNS Zone and Record
   import_tasks: remove-freeipa.yml
-  tags: remove
-  when: remove_freeipa is defined and remove_freeipa == true and inventory_hostname in groups['dns']
+  tags: remove, delete
+  when: ( freeipa is defined and freeipa == true ) and inventory_hostname in groups['dns']
 

@@ -46,8 +46,8 @@
   register: add_required_config
   ignore_errors: true
   with_items:
-    - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain={{ okd.domain }}",         line: "^#domain=example.com",    state: present }
-    - { file_name: "/etc/dnsmasq.conf",   regexp: "^address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
+    - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain={{ _okd.domain }}",         line: "^#domain=example.com",    state: present }
+    - { file_name: "/etc/dnsmasq.conf",   regexp: "^address=/apps.{{ _okd.domain }}/{{ manager_ipaddr }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
 
     # - { file_name: "/etc/dnsmasq.conf",   regexp: "^interface={{ netdev1 }}",         line: "interface=lo",            state: present }
     # - { file_name: "/etc/dnsmasq.conf",   regexp: "^listen-address=*",    line: "#listen-address=",                    state: present }

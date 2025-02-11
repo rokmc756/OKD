@@ -6,7 +6,7 @@
   register: delete_ignition_file
   ignore_errors: true
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   with_items:
     - "bootstrap.ign"
     - "master.ign"
@@ -27,7 +27,7 @@
   register: delete_okd_ignition_configs
   ignore_errors: true
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ delete_okd_ignition_configs }}
@@ -40,7 +40,7 @@
   register: delete_okd_manifests
   ignore_errors: true
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ delete_okd_manifests }}
@@ -49,7 +49,7 @@
 
 - name: Delete Config Files for Ignition File
   file:
-    path: "{{ okd.base_path }}/okd4/{{ item }}"
+    path: "{{ _okd.base_path }}/okd4/{{ item }}"
     state: absent
   register: delete_ignition_file
   ignore_errors: true
@@ -60,7 +60,7 @@
 
 - name: Delete Directory for Ignition File
   file:
-    path: "{{ okd.base_path }}/okd4"
+    path: "{{ _okd.base_path }}/okd4"
     state: absent
   register: delete_ignition_file
   ignore_errors: true
@@ -85,7 +85,7 @@
 
 - name: Delete OKD Client Archieves
   file:
-    path: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    path: "{{ _okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
     state: absent
   register: delete_okd_client_archieves
   ignore_errors: true

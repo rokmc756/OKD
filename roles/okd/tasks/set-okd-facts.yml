@@ -1,24 +1,24 @@
 ---
-# https://serverfault.com/questions/1040246/how-to-select-network-interface-given-ip-address-in-ansible-across-debian-and-fr
-#
 - name: Get Network Interface Names from Prefix of IP Addresses Provided for Kubernetes Nodes
   set_fact:
-    netdev0: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', okd.net.ipaddr0 ) | map(attribute='device') | first }}"
-    netdev1: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', okd.net.ipaddr1 ) | map(attribute='device') | first }}"
-    netdev2: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', okd.net.ipaddr2 ) | map(attribute='device') | first }}"
+    netdev0: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', _okd.net.ipaddr0 ) | map(attribute='device') | first }}"
+    netdev2: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', _okd.net.ipaddr2 ) | map(attribute='device') | first }}"
+    # netdev1: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', _okd.net.ipaddr1 ) | map(attribute='device') | first }}"
 
-#
+
 - name: Get IP Address From Provided Network Device Names
   set_fact:
     ipaddr0: "{{ hostvars[inventory_hostname]['ansible_'~netdev0].ipv4.address }}"
-    ipaddr1: "{{ hostvars[inventory_hostname]['ansible_'~netdev1].ipv4.address }}"
     ipaddr2: "{{ hostvars[inventory_hostname]['ansible_'~netdev2].ipv4.address }}"
+    # ipaddr1: "{{ hostvars[inventory_hostname]['ansible_'~netdev1].ipv4.address }}"
 
 
 - name: Set Default Network Device and Address
   set_fact:
-    _netdev: "{{ 'ansible_'~ netdev1 }}"
-    _ipaddr: "{{ ipaddr1 }}"
+    netdev: "{{ netdev2 }}"
+    ipaddr: "{{ ipaddr2 }}"
+    _netdev: "{{ 'ansible_'~ netdev2 }}"
+    _ipaddr: "{{ ipaddr2 }}"
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['all'] }}"
@@ -26,7 +26,7 @@
 
 - name: Get Manager Manager IP Address
   set_fact:
-    manager_ipaddr1: "{{ hostvars[inventory_hostname]['ansible_'~netdev1].ipv4.address }}"
+    manager_ipaddr: "{{ hostvars[inventory_hostname][-netdev].ipv4.address }}"
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['all'] }}"
@@ -35,7 +35,7 @@
 
 - name: Define OKD Version
   set_fact:
-    okd_version: "{{ okd.major_version }}.{{ okd.minor_version }}.{{ okd.patch_version }}-{{ okd.build_version }}-{{ okd.release_date }}"
+    okd_version: "{{ _okd.major_version }}.{{ _okd.minor_version }}.{{ _okd.patch_version }}-{{ _okd.build_version }}-{{ _okd.release_date }}"
 
 
 # https://stackoverflow.com/questions/36328907/ansible-get-all-the-ip-addresses-of-a-group
@@ -112,20 +112,20 @@
 
 
 #- set_fact:
-#    cni_mtu: "{{ k8s.cni.calico.vxlan.mtu }}"
-#  when: k8s.cni.calico.install == true and k8s.cni.calico.vxlan.enable == true
+#    cni_mtu: "{{ _okd.cni.calico.vxlan.mtu }}"
+#  when: _okd.cni.calico.install == true and _okd.cni.calico.vxlan.enable == true
 #- set_fact:
-#    cni_mtu: "{{ k8s.cni.calico.ipip.mtu }}"
-#  when: k8s.cni.calico.install == true and k8s.cni.calico.ipip.enable == true
+#    cni_mtu: "{{ _okd.cni.calico.ipip.mtu }}"
+#  when: _okd.cni.calico.install == true and _okd.cni.calico.ipip.enable == true
 #- set_fact:
-#    cni_mtu: "{{ k8s.cni.tigera.vxlan.mtu }}"
-#  when: k8s.cni.tigera.install == true and k8s.cni.tigera.vxlan.enable == true
+#    cni_mtu: "{{ _okd.cni.tigera.vxlan.mtu }}"
+#  when: _okd.cni.tigera.install == true and _okd.cni.tigera.vxlan.enable == true
 #- set_fact:
-#    cni_mtu: "{{ k8s.cni.tigera.ipip.mtu }}"
-#  when: k8s.cni.tigera.install == true and k8s.cni.tigera.ipip.enable == true
+#    cni_mtu: "{{ _okd.cni.tigera.ipip.mtu }}"
+#  when: _okd.cni.tigera.install == true and _okd.cni.tigera.ipip.enable == true
 #- set_fact:
-#    cni_mtu: "{{ k8s.cni.kube_flannel.mtu }}"
-#  when: k8s.cni.kube_flannel.install == true
+#    cni_mtu: "{{ _okd.cni.kube_flannel.mtu }}"
+#  when: _okd.cni.kube_flannel.install == true
 
 
 #- block:
@@ -150,7 +150,7 @@
 
 
 - name: Get OKD Pull Secret
-  command: cat {{ okd.local_home_dir }}/secret-infos/okd-pull-secret.key
+  command: cat {{ _okd.local_home_dir }}/secret-infos/okd-pull-secret.key
   register: okd_pull_secret
   delegate_to: localhost
   delegate_facts: true
@@ -160,7 +160,7 @@
 
 
 - name: Get Local SSH Key Secret
-  command: cat {{ okd.local_home_dir }}/.ssh/id_rsa.pub
+  command: cat {{ _okd.local_home_dir }}/.ssh/id_rsa.pub
   register: local_ssh_key_secret
   delegate_to: localhost
   delegate_facts: true
@@ -170,7 +170,7 @@
 
 
 - name: Get Manager SSH Key Secret
-  command: cat {{ okd.base_path }}/.ssh/id_rsa.pub
+  command: cat {{ _okd.base_path }}/.ssh/id_rsa.pub
   register: mgr_ssh_key_secret
   when: inventory_hostname in groups['manager']
 - debug: msg={{ mgr_ssh_key_secret.stdout  }}

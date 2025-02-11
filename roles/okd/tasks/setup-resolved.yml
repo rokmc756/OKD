@@ -1,15 +1,14 @@
 ---
-- name: Install DNSMaq Package
+- name: Install Systemd Resolved Package
   package:
     name: "{{ item }}"
     state: present
   with_items:
     - "bind-utils"
     - "systemd-resolved"
-  #  - "dnsmasq"
 
 
-- name: Add Required Settings for OKD Cluster to Dnsmasq
+- name: Add Required Settings for OKD Cluster to Systemd Resolved
   lineinfile:
     dest: "{{ item.file_name }}"
     regexp: "{{ item.regexp }}"
@@ -18,8 +17,6 @@
   register: add_required_config
   with_items:
     - { file_name: "/etc/systemd/resolved.conf",  regexp: "^#DNS=",  line: "DNS=192.168.0.90 8.8.8.8",  state: present }
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#address=/double-click.net/127.0.0.1",  line: "address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",  state: present }
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#domain=example.com",  line: "domain={{ okd.domain }}",  state: present }
 
 
 # Change DNS setting
@@ -28,28 +25,17 @@
   shell: |
     export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
     nmcli connection modify {{ item.conn_name }} ipv4.dns "$DNS"
-    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ okd.domain }}"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ _okd.domain }}"
     nmcli connection up {{ item.conn_name }}
   register: config_dns_settings
   with_items:
     - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn1 }
-    - { dev_ip_addr: "{{ ipaddr1 }}", netdev_name: "{{ netdev1 }}", conn_name: conn2 }
     - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn3 }
 - debug: msg={{ config_dns_settings }}
   when: print_debug == true
-  # nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ manager_ipaddr1 }} $DNS"
 
 
-#- name: Configure DNSMasq Server
-#  lineinfile:
-#    dest: "/etc/resolv.conf"
-#    line: "nameserver 127.0.0.1"
-#    insertafter: '^search*'
-#    state: present
-#  register: config_dnsmasq_server
-
-
-- name: Restart DNSMasq and Systemd Resolved Services
+- name: Restart Systemd Resolved Services
   systemd:
     name: "{{ item.service }}"
     state: "{{ item.state }}"
@@ -63,7 +49,4 @@
     - { service: systemd-resolved, state: started }
 - debug: msg={{ start_service }}
   when: print_debug == true
-
-#    - { service: dnsmasq, state: restarted }
-
 

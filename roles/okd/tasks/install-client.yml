@@ -1,8 +1,8 @@
 ---
 - name: Download OpenShift Install Clients
   get_url:
-    url: "{{ okd.download_url }}/{{ okd_version }}/{{ item }}-{{ okd_version }}.tar.gz"
-    dest: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    url: "{{ _okd.download_url }}/{{ okd_version }}/{{ item }}-{{ okd_version }}.tar.gz"
+    dest: "{{ _okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
     owner: root
     group: root
     mode: 0644
@@ -17,7 +17,7 @@
 
 
 - name: Upload OpenShift Install Clients
-  copy: src={{ item }}-{{ okd_version }}.tar.gz dest={{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz mode=0644 owner=root group=root
+  copy: src={{ item }}-{{ okd_version }}.tar.gz dest={{ _okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz mode=0644 owner=root group=root
   register: upload_okd_install_clients
   with_items:
     - openshift-client-linux
@@ -30,7 +30,7 @@
 
 - name: Extract OpenShift Install Clients
   unarchive:
-    src: "{{ okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
+    src: "{{ _okd.base_path }}/{{ item }}-{{ okd_version }}.tar.gz"
     dest: "/usr/local/bin/"
     mode: 0755
     owner: root
@@ -50,7 +50,7 @@
     restorecon -RFv /usr/local/bin/*
   register: set_selinux_policy
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ set_selinux_policy }}
@@ -62,7 +62,7 @@
     oc version
   register: check_oc_version
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ check_oc_version }}
@@ -71,7 +71,7 @@
 
 - name: Create Directory for Ignition File
   file:
-    path: "{{ okd.base_path }}/okd4"
+    path: "{{ _okd.base_path }}/okd4"
     state: directory
     owner: root
     group: root
@@ -85,7 +85,7 @@
 
 - name: Copy Config Files for Ignition File
   template:
-    dest: "{{ okd.base_path }}/okd4/{{ item }}.yaml"
+    dest: "{{ _okd.base_path }}/okd4/{{ item }}.yaml"
     src: "{{ item }}.yaml.j2"
   register: copy_ignition_file
   with_items:
@@ -96,7 +96,7 @@
 
 - name: Copy Config Files for Ignition File
   template:
-    dest: "{{ okd.base_path }}/{{ item }}"
+    dest: "{{ _okd.base_path }}/{{ item }}"
     src: "{{ item }}.j2"
   register: copy_ignition_file
   with_items:
@@ -109,7 +109,7 @@
     openshift-install create manifests --dir=okd4 --log-level=debug
   register: create_okd_manifests
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ create_okd_manifests }}
@@ -134,7 +134,7 @@
     cp ./okd4/{bootstrap.ign,master.ign,worker.ign} /usr/share/nginx/html/
   register: copy_ignition_file
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ copy_ignition_file }}
@@ -146,7 +146,7 @@
     chmod 644 /usr/share/nginx/html/{bootstrap.ign,master.ign,worker.ign}
   register: change_ignition_file_permission
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ change_ignition_file_permission }}
@@ -158,7 +158,7 @@
     restorecon -RFv /usr/share/nginx/html/*
   register: set_selinux_policy
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ set_selinux_policy }}
@@ -174,7 +174,7 @@
 #    curl -v https://api.okd4.pivotal.io:6443
 #  register: verify_api_resolvable
 #  args:
-#    chdir: "{{ okd.base_path }}"
+#    chdir: "{{ _okd.base_path }}"
 #  environment:
 #    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 #- debug: msg={{ verify_api_resolvable ]]

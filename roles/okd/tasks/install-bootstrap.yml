@@ -7,9 +7,9 @@
     - "coreos-installer"
 
 
-- name: Install Fedora CoreOS Boot Strap to Local NVME Drive
+- name: Install Fedora CoreOS Boot Strap to Local Drive
   shell: |
-    coreos-installer install /dev/nvme0n1 --ignition-url=http://{{ manager_ipaddr1 }}:8080/bootstrap.ign \
+    coreos-installer install {{ _okd.coreos_dev }} --ignition-url=http://{{ manager_ipaddr }}:8080/bootstrap.ign \
     --insecure-ignition --copy-network
   register: install_coreos_bootstrap_local_drive
 - debug: msg={{ install_coreos_bootstrap_local_drive }}

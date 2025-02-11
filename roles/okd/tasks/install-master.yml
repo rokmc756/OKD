@@ -28,7 +28,7 @@
 
 - name: Install Fedora CoreOS Master to Local NVME Drive
   shell: |
-    coreos-installer install /dev/nvme0n1 --ignition-url=http://{{ manager_ipaddr1 }}:8080/master.ign \
+    coreos-installer install {{ _okd.coreos_dev }} --ignition-url=http://{{ manager_ipaddr }}:8080/master.ign \
     --insecure-ignition --copy-network
   register: install_coreos_master_local_drive
 - debug: msg={{ install_coreos_master_local_drive }}
@@ -84,7 +84,7 @@
 - meta: flush_handlers
 
 
-#
+
 #- name: Check if OSD Pod are Running Normally
 #  shell: kubectl -n rook-ceph get all | grep pod/rook-ceph-osd-{{ item }}
 #  register: check_osd_pod
@@ -93,12 +93,12 @@
 #  retries: 100
 #  with_sequence: start=0 end=2
 #- debug: msg={{ check_osd_pod }}
-#
-#
-#
+
+
+
 # oc get nodes | sed 1d | awk '{print $2}'
 # The output should be Ready
-#
+
 
 # oc get pods -A | sed 1d | awk '{print $4}' | grep -v Running
 

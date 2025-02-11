@@ -15,7 +15,7 @@
 #- name: Copy Iginition Json Template
 #  template:
 #    src: "{{ item }}.j2"
-#    dest: "{{ okd.base_path }}/{{ item }}"
+#    dest: "{{ _okd.base_path }}/{{ item }}"
 #    owner: root
 #    group: root
 #    mode: 0755
@@ -27,7 +27,7 @@
 
 - name: Install Fedora CoreOS Worker to Local NVME Drive
   shell: |
-    coreos-installer install /dev/nvme0n1 --ignition-url=http://{{ manager_ipaddr1 }}:8080/worker.ign \
+    coreos-installer install {{ _okd.coreos_dev }} --ignition-url=http://{{ manager_ipaddr }}:8080/worker.ign \
     --insecure-ignition --copy-network
   register: install_coreos_worker_local_drive
 - debug: msg={{ install_coreos_worker_local_drive }}

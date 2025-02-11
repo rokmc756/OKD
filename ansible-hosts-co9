@@ -1,0 +1,25 @@
+[all:vars]
+ssh_key_filename="id_rsa"
+remote_machine_username="jomoon"
+remote_machine_password="changeme"
+ansible_python_interpreter=/usr/bin/python3
+
+
+[manager]
+mgr             ansible_ssh_host=192.168.2.171
+
+
+[_bootstrap]
+bootstrap       ansible_ssh_host=192.168.2.172
+
+
+[master]
+master-1        ansible_ssh_host=192.168.2.173
+master-2        ansible_ssh_host=192.168.2.174
+master-3        ansible_ssh_host=192.168.2.175
+
+
+[compute]
+worker-1        ansible_ssh_host=192.168.2.176
+worker-2        ansible_ssh_host=192.168.2.177
+

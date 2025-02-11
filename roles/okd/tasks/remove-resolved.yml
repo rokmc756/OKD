@@ -1,43 +1,30 @@
 ---
-- name: Delete DNSMasq Server
+- name: Delete Local DNS Server
   lineinfile:
     dest: "/etc/resolv.conf"
     regexp: "^nameserver 127.0.0.1"
     state: absent
-  register: delete_dnsmasq_server
-
-
-#- name: Stop DNSMasq Service
-#  systemd:
-#    name: dnsmasq
-#    state: stopped
-#  register: stop_dnsmasq
-#  ignore_errors: true
-#  until: stop_dnsmasq is succeeded
-#  retries: 10
-#  delay: 10
-#- debug: msg={{ stop_dnsmasq }}
-#  when: print_debug == true
+  register: delete_local_dns_server
 
 
 # Change DNS setting
 # Replace device name or IP address to your environment
 - name: Rollback DNS Settings
   shell: |
-    export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}' | sed 1d)
+    export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
     nmcli connection modify {{ item.conn_name }} ipv4.dns "$DNS"
     nmcli connection modify {{ item.conn_name }} ipv4.dns-search "okd4.pivotal.io"
     nmcli connection up {{ item.conn_name }}
   register: rollback_dns_settings
   with_items:
     - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn1 }
-    - { dev_ip_addr: "{{ ipaddr1 }}", netdev_name: "{{ netdev1 }}", conn_name: conn2 }
     - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn3 }
 - debug: msg={{ rollback_dns_settings }}
   when: print_debug == true
+  #  export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}' | sed 1d)
 
 
-- name: Rollback Required Settings for OKD Cluster to Dnsmasq
+- name: Rollback Required Settings for OKD Cluster to Systemd Resolved
   lineinfile:
     dest: "{{ item.file_name }}"
     regexp: "{{ item.regexp }}"
@@ -48,17 +35,13 @@
   with_items:
     - { file_name: "/etc/systemd/resolved.conf",  regexp: "^DNS=*",  line: "#DNS=",  state: present }
     - { file_name: "/etc/resolv.conf",            regexp: "^search okd4.pivotal.io",    line: "search okd4.pivotal.io",        state: present }
-    # - { file_name: "/etc/dnsmasq.conf",           regexp: "^domain={{ okd.domain }}",                        line: "^#domain=example.com",                   state: present }
-    # - { file_name: "/etc/dnsmasq.conf",           regexp: "^address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
 
 
-
-- name: Uninstall DNSMaq and NGINX Packages
+- name: Uninstall Systemd Resolved Packages
   package:
     name: "{{ item }}"
     state: absent
   ignore_errors: true
   with_items:
     - "systemd-resolved"
-  #  - "dnsmasq"
 

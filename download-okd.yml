@@ -1,0 +1,17 @@
+- hosts: localhost
+  tasks:
+    - name: Download Download Software Binaries and Save the into Ansible Files Directory
+      become: true
+      vars:
+        dss_download_version: "{{ _dss.major_version }}.{{ _dss.minor_version }}.{{ _dss.patch_version }}"
+        local_dir: "/home/jomoon/Dataiku"
+      get_url:
+        url: "{{ item.url }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - { url: "{{ _dss.download_url }}/{{ dss_download_version }}/dataiku-dss-{{ dss_download_version }}.tar.gz",
+            dest: "{{ local_dir }}/roles/dss/files/dataiku-dss-{{ dss_download_version }}.tar.gz" }
+        - { url: "{{ _dss.download_fm_url }}/{{ dss_download_version }}/dataiku-fm-{{ dss_download_version }}.tar.gz",
+            dest: "{{ local_dir }}/roles/dss/files/dataiku-fm-{{ dss_download_version }}.tar.gz" }
+      tags: download
+

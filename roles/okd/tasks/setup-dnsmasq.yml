@@ -26,23 +26,23 @@
     state: "{{ item.state }}"
   register: add_required_config
   with_items:
-    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#address=/double-click.net/127.0.0.1",  line: "address=/apps.{{ okd.domain }}/{{ manager_ipaddr1 }}",  state: present }
-    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#domain=example.com",  line: "domain={{ okd.domain }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#address=/double-click.net/127.0.0.1",  line: "address=/apps.{{ _okd.domain }}/{{ manager_ipaddr }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#domain=example.com",  line: "domain={{ _okd.domain }}",  state: present }
     - { file_name: "/etc/dnsmasq.conf",  regexp: "^#domain-needed",       line: "domain-needed",  state: present }
     - { file_name: "/etc/dnsmasq.conf",  regexp: "^#bogus-priv",          line: "bogus-priv",  state: present }
     - { file_name: "/etc/dnsmasq.conf",  regexp: "^#expand-hosts",        line: "expand-hosts",  state: present }
-    - { file_name: "/etc/dnsmasq.conf",  regexp: "^interface=lo",         line: "interface={{ netdev1 }}",  state: present }
-    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=127.0.0.1,{{ ipaddr1 }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^interface=lo",         line: "interface={{ netdev }}",  state: present }
+    - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=127.0.0.1,{{ ipaddr }}",  state: present }
     - { file_name: "/etc/dnsmasq.conf",  regexp: "^#port=5353",           line: "port=53",  state: present }
 
 
     # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#no-resolv",           line: "no-resolv",  state: present }
     # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#strict-order",        line: "strict-order",  state: present }
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=::1,127.0.0.1,{{ ipaddr0 }},{{ ipaddr1 }},{{ ipaddr2 }}",  state: present }
+    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=::1,127.0.0.1,{{ ipaddr0 }},{{ ipaddr2 }}",  state: present }
     # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#addn-hosts=*",        line: "addn-host=/etc/dnsmasq.d/addresses.conf",  state: present }
 
 #addn-hosts=/etc/banner_add_hosts
-#
+
 
 - name: Configure DNSMasq Server
   lineinfile:
@@ -74,13 +74,12 @@
 - name: CHange DNS Settings
   shell: |
     export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
-    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ manager_ipaddr1 }} $DNS"
-    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ okd.domain }}"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns "{{ manager_ipaddr }} $DNS"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ _okd.domain }}"
     nmcli connection up {{ item.conn_name }}
   register: config_dns_settings
   with_items:
     - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn1 }
-    - { dev_ip_addr: "{{ ipaddr1 }}", netdev_name: "{{ netdev1 }}", conn_name: conn2 }
     - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn3 }
 - debug: msg={{ config_dns_settings }}
   when: print_debug == true
