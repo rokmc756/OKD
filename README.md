@@ -1,9 +1,8 @@
 ## What is this Ansible Playbook for OKD
-It is Ansible Playbook to deploy OKD for Rocky/CentOS 9.x
-The purpose of this is only for development environment not production.
+It is Ansible Playbook to deploy OKD for Rocky/CentOS 9.x. The purpose of this is only for development environment not production.
 
 ## OKD Architecutre
-![alt text]()
+
 
 ## Supported Platform and OS
 Virtual Machines\
@@ -31,7 +30,7 @@ $ yum install ansible
 ### Configure Variables and Inventory with Hostnames, IP Addresses, sudo Username and Password
 #### 1) Deploy OKD Manager
 ```
-$ vi ansible-hosts-mgr
+$ vi ansible-hosts-co9-mgr
 [all:vars]
 ssh_key_filename="id_rsa"
 remote_machine_username="jomoon"
@@ -48,7 +47,7 @@ $ make okd r=install s=client
 
 ### 2) Deploy OKD BootStrap
 ```
-$ vi ansible-hosts-bootstrap
+$ vi ansible-hosts-co9-bootstrap
 [all:vars]
 ssh_key_filename="id_rsa"
 remote_machine_username="jomoon"
@@ -63,7 +62,7 @@ $ make okd r=install s=bootstrap
 
 ### Deploy OKD Master
 ```
-$ vi ansible-hosts-master
+$ vi ansible-hosts-co9-master
 [all:vars]
 ssh_key_filename="id_rsa"
 remote_machine_username="jomoon"
@@ -79,10 +78,6 @@ master01        ansible_ssh_host=192.168.1.183
 $ make okd r=install s=master
 ```
 
-
-#### Test
-```
-```
 
 #### Test
 ```
