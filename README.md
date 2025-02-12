@@ -2,7 +2,7 @@
 It is Ansible Playbook to deploy OKD for Rocky/CentOS 9.x. The purpose of this is only for development environment not production.
 
 ## OKD Architecutre
-![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-architecture.png)
+![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/installation-target.png)
 
 ## Supported Platform and OS
 Virtual Machines\
