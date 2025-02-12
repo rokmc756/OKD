@@ -2,7 +2,7 @@
 It is Ansible Playbook to deploy OKD for Rocky/CentOS 9.x. The purpose of this is only for development environment not production.
 
 ## OKD Architecutre
-
+![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-architecture.png)
 
 ## Supported Platform and OS
 Virtual Machines\
@@ -215,6 +215,7 @@ $ make okd r=deploy s=worker
 ```
 
 ## References
+- https://medium.com/@tcij1013/installing-okd-the-community-distribution-of-kubernetes-4-x-cluster-on-a-single-node-8410146858b6
 - https://www.pivert.org/deploy-openshift-okd-on-proxmox-ve-or-bare-metal-tutorial/
 - https://stackoverflow.com/questions/65266545/okd-installation-behind-proxy
 - https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124
