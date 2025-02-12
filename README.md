@@ -38,6 +38,13 @@ $ yum install ansible
 ```
 
 ## How to Deploy and Destroy OKD
+### Download OKD Software Binaries to Ansible Files Directory
+```
+$ make download
+
+$ ls -al roles/okd/files/
+openshift-client-linux-4.17.0-okd-scos.0.tar.gz openshift-install-linux-4.17.0-okd-scos.0.tar.gz ccoctl-linux-4.17.0-okd-scos.0.tar.gz
+```
 ### Setup DNS with FreeIPA
 #### 1) Configure Varialbes for DNS Zone and Records
 ```
