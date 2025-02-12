@@ -29,8 +29,8 @@
     nmcli connection up {{ item.conn_name }}
   register: config_dns_settings
   with_items:
-    - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn1 }
-    - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn3 }
+    - { dev_ip_addr: "{{ ipaddr0 }}", netdev_name: "{{ netdev0 }}", conn_name: conn0 }
+    - { dev_ip_addr: "{{ ipaddr2 }}", netdev_name: "{{ netdev2 }}", conn_name: conn2 }
 - debug: msg={{ config_dns_settings }}
   when: print_debug == true
 

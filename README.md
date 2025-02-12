@@ -137,7 +137,39 @@ or
 $ make okd r=remove s=dns c=all
 ```
 
-#### Configure Inventory for OKD Manager Node
+
+### Setup Network with Resolved or DNSMasq for Manager Node
+#### 1) Configure Varialbes for DNS Zone and Records
+$ vi ansible-hosts-co9-network
+```
+[all:vars]
+ssh_key_filename="id_rsa"
+remote_machine_username="jomoon"
+remote_machine_password="changeme"
+ansible_python_interpreter=/usr/bin/python3
+
+[manager]
+mgr             ansible_ssh_host=192.168.2.171
+
+[dns]
+rk9-freeipa     ansible_ssh_host=192.168.2.199
+```
+#### 2) Setup Network with Resolved or DNSMasq
+```
+$ make okd r=setup s=network c=resolved
+or
+$ make okd r=setup s=network c=dnsmasq
+```
+#### 3) Remove Network with Resolved or DNSMasq
+```
+$ make okd r=remove s=network c=dnsmasq
+or
+$ make okd r=remove s=network c=resolved
+```
+
+
+### Setup OKD Manager Node
+#### 1) Configure Inventory for OKD Manager Node
 $ vi ansible-hosts-co9-mgr
 ```
 [all:vars]
@@ -164,16 +196,13 @@ worker-2        ansible_ssh_host=192.168.2.177
 [dns]
 rk9-freeipa     ansible_ssh_host=192.168.2.199
 ```
-
-#### Deploy OKD Manager Node
+#### 2) Deploy OKD Manager Node
 ```
 $ make okd r=deploy s=mgr
 ```
-
-#### Deploy OKD Manager Node
+#### 3) Deploy OKD Manager Node
 ```
 $ make okd r=destroy s=mgr
-
 ```
 
 ## References

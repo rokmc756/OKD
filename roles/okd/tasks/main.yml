@@ -13,7 +13,7 @@
 - name: Import OKD Network Playbook
   import_tasks: network/main.yml
   tags: setup, remove
-  when: ( network is defined and network == true )
+  when: ( network is defined and network == true ) and inventory_hostname in groups['manager']
 
 
 - name: Deploy OKD Manager
