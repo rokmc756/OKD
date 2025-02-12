@@ -1,0 +1,12 @@
+#!/bin/sh
+exec tail -n +3 $0
+
+menuentry "Fedora CoreOS" {
+   insmod part_gpt
+   insmod fat
+   insmod chain
+   set root=(hd2,gpt2)
+   drivemap -s hd0 hd2
+   chainloader (hd2)+1
+}
+

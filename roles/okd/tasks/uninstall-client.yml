@@ -96,4 +96,3 @@
 - debug: msg={{ delete_okd_client_archieves }}
   when: print_debug == true
 
-

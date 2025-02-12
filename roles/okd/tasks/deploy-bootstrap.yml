@@ -16,40 +16,48 @@
   when: print_debug == true
 
 
-- name: Copy CoreOS Boot Entry for 1st NVME Disk
-  template:
-    src: "{{ item }}.j2"
-    dest: "/etc/grub.d/{{ item }}"
-    owner: root
-    group: root
-    mode: 0755
-  register: copy_coreos_boot_entry
-  ignore_errors: yes
-  with_items:
-    - "40_custom"
-- debug: msg={{ copy_coreos_boot_entry }}
-
-
-- name: Change Default Boot Entry for GRUB2
-  lineinfile:
-    dest: "{{ item.dest }}"
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    state: "{{ item.state }}"
-  register: change_default_boot_entry
-  with_items:
-    - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"Fedora CoreOS\"", dest: "/etc/default/grub", state: present }
-- debug: msg={{ change_default_boot_entry }}
-  when: print_debug == true
+#- name: Copy CoreOS Boot Entry for 1st Disk
+#  template:
+#    src: "{{ item }}.j2"
+#    dest: "/etc/grub.d/{{ item }}"
+#    owner: root
+#    group: root
+#    mode: 0755
+#  register: copy_coreos_boot_entry
+#  ignore_errors: yes
+#  with_items:
+#    - "40_custom"
+#- debug: msg={{ copy_coreos_boot_entry }}
+#
+#
+#- name: Change Default Boot Entry for GRUB2
+#  lineinfile:
+#    dest: "{{ item.dest }}"
+#    regexp: "{{ item.regexp }}"
+#    line: "{{ item.line }}"
+#    state: "{{ item.state }}"
+#  register: change_default_boot_entry
+#  with_items:
+#    - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"Fedora CoreOS\"", dest: "/etc/default/grub", state: present }
+#- debug: msg={{ change_default_boot_entry }}
+#  when: print_debug == true
   # "GRUB_DEFAULT=\"saved\""
 
 
-- name: Install Fedora CoreOS Boot Strap to Local NVME Drive
+- name: Install Fedora CoreOS Boot Strap to Local Drive
   shell: |
     grub2-mkconfig -o /boot/grub2/grub.cfg
   register: install_coreos_local_drive
 - debug: msg={{ install_coreos_local_drive }}
   when: print_debug == true
+
+
+#- name: Reinstall GRUB2
+#  shell: |
+#    grub2-install {{ _okd.coreos_dev }}
+#  register: reinstall_grub2
+#- debug: msg={{ reinstall_grub2 }}
+#  when: print_debug == true
 
 
 - name: Reboot Required

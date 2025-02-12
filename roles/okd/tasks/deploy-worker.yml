@@ -35,31 +35,31 @@
   # --ignition-url=http://192.168.1.181:8080/user.ign --insecure-ignition --copy-network
 
 
-- name: Copy CoreOS Boot Entry for 1st NVME Disk
-  template:
-    src: "{{ item }}.j2"
-    dest: "/etc/grub.d/{{ item }}"
-    owner: root
-    group: root
-    mode: 0755
-  register: copy_coreos_boot_entry
-  ignore_errors: yes
-  with_items:
-    - "40_custom"
-- debug: msg={{ copy_coreos_boot_entry }}
-
-
-- name: Change Default Boot Entry for GRUB2
-  lineinfile:
-    dest: "{{ item.dest }}"
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    state: "{{ item.state }}"
-  register: change_default_boot_entry
-  with_items:
-    - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"Fedora CoreOS\"", dest: "/etc/default/grub", state: present }
-- debug: msg={{ change_default_boot_entry }}
-  when: print_debug == true
+#- name: Copy CoreOS Boot Entry for 1st NVME Disk
+#  template:
+#    src: "{{ item }}.j2"
+#    dest: "/etc/grub.d/{{ item }}"
+#    owner: root
+#    group: root
+#    mode: 0755
+#  register: copy_coreos_boot_entry
+#  ignore_errors: yes
+#  with_items:
+#    - "40_custom"
+#- debug: msg={{ copy_coreos_boot_entry }}
+#
+#
+#- name: Change Default Boot Entry for GRUB2
+#  lineinfile:
+#    dest: "{{ item.dest }}"
+#    regexp: "{{ item.regexp }}"
+#    line: "{{ item.line }}"
+#    state: "{{ item.state }}"
+#  register: change_default_boot_entry
+#  with_items:
+#    - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"Fedora CoreOS\"", dest: "/etc/default/grub", state: present }
+#- debug: msg={{ change_default_boot_entry }}
+#  when: print_debug == true
 # - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"saved\"", dest: "/etc/default/grub", state: present }
 
 

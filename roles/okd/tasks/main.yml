@@ -29,26 +29,26 @@
 
 
 - name: Deploy CoreOS BootStrap
-  import_tasks: install-bootstrap.yml
+  import_tasks: deploy-bootstrap.yml
   tags: deploy, setup, install
   when: ( bootstrap is defined and bootstrap == true ) and inventory_hostname in groups['_bootstrap']
 
 
 - name: Deploy CoreOS Master
-  import_tasks: install-master.yml
+  import_tasks: deploy-master.yml
   tags: deploy, setup, install
   when: ( master is defined and master == true ) and inventory_hostname in groups['master']
 
 
 - name: Deploy CoreOS Worker
-  import_tasks: install-worker.yml
+  import_tasks: deploy-worker.yml
   tags: deploy, setup, install
   when: ( worker is defined and worker == true ) and inventory_hostname in groups['compute']
 
 
 - name: Uninstall OKD Install Cleint
   import_tasks: uninstall-client.yml
-  tags: delete, remove, uninstall
+  tags: remove, uninstall
   when: ( client is defined and client == true ) and inventory_hostname in groups['manager']
 
 
@@ -60,8 +60,8 @@
 
 - name: Back to CentOS
   import_tasks: back-to-centos.yml
-  tags: config, return
-  when: ( centos is defined and centos == true ) and inventory_hostname in groups['master']
+  tags: rollback, return
+  when: ( centos is defined and centos == true ) and inventory_hostname in groups['_bootstrap']
 
 
 - name: Setup DNS Zone and Record

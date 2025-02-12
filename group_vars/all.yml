@@ -16,8 +16,8 @@ _okd:
   base_path: /root
   host_num: "{{ groups['all'] | length }}"
   local_home_dir: "/home/jomoon"
-  coreos_dev: "/dev/vdb"  # coreos_dev: "/dev/nvme0n1"
-  download_client: true
+  coreos_dev: "/dev/vdc"  # coreos_dev: "/dev/nvme0n1"
+  download_client: false
   net:
     type: "virtual"                            # Or Physical
     gateway: "192.168.2.1"

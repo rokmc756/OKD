@@ -31,12 +31,7 @@ $ yum install ansible
 #### 1) Deploy OKD Manager
 ```
 $ vi ansible-hosts-co9-mgr
-[all:vars]
-ssh_key_filename="id_rsa"
-remote_machine_username="jomoon"
-remote_machine_password="changeme"
-ansible_python_interpreter=/usr/bin/python3
-
+~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.1.181
 
@@ -48,12 +43,7 @@ $ make okd r=install s=client
 ### 2) Deploy OKD BootStrap
 ```
 $ vi ansible-hosts-co9-bootstrap
-[all:vars]
-ssh_key_filename="id_rsa"
-remote_machine_username="jomoon"
-remote_machine_password="changeme"
-ansible_python_interpreter=/usr/bin/python3
-
+~~ snip
 [bootstrap]
 bootstrap01       ansible_ssh_host=192.168.1.182
 
@@ -63,12 +53,7 @@ $ make okd r=install s=bootstrap
 ### Deploy OKD Master
 ```
 $ vi ansible-hosts-co9-master
-[all:vars]
-ssh_key_filename="id_rsa"
-remote_machine_username="jomoon"
-remote_machine_password="changeme"
-ansible_python_interpreter=/usr/bin/python3
-
+~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.1.181
 
@@ -142,12 +127,7 @@ $ make okd r=remove s=dns c=all
 #### 1) Configure Varialbes for DNS Zone and Records
 $ vi ansible-hosts-co9-network
 ```
-[all:vars]
-ssh_key_filename="id_rsa"
-remote_machine_username="jomoon"
-remote_machine_password="changeme"
-ansible_python_interpreter=/usr/bin/python3
-
+~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
 
@@ -172,12 +152,7 @@ $ make okd r=remove s=network c=resolved
 #### 1) Configure Inventory for OKD Manager Node
 $ vi ansible-hosts-co9-mgr
 ```
-[all:vars]
-ssh_key_filename="id_rsa"
-remote_machine_username="jomoon"
-remote_machine_password="changeme"
-ansible_python_interpreter=/usr/bin/python3
-
+~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
 
@@ -205,6 +180,83 @@ $ make okd r=deploy s=mgr
 $ make okd r=destroy s=mgr
 ```
 
+
+#### 4) Configure Inventory for OKD BootStrap Node
+$ vi ansible-hosts-co9-bootstrap
+```
+~~ snip
+[manager]
+mgr             ansible_ssh_host=192.168.2.171
+
+[_bootstrap]
+bootstrap       ansible_ssh_host=192.168.2.172
+
+[dns]
+rk9-freeipa     ansible_ssh_host=192.168.2.199
+~~ snip
+```
+
+#### 5) Deploy OKD BootStrap Node
+```
+$ make okd r=deploy s=bootstrap
+```
+
+#### 6) Rollback Centos After Removing Customer Boot Loader
+```
+$ make okd r=rollback s=bootstrap c=centos
+```
+
+#### 7) Configure Inventory for OKD Master Nodes
+$ vi ansible-hosts-co9-master
+```yaml
+~~ snip
+[manager]
+mgr             ansible_ssh_host=192.168.2.171
+
+[compute]
+worker-1        ansible_ssh_host=192.168.2.176
+worker-2        ansible_ssh_host=192.168.2.177
+
+[dns]
+rk9-freeipa     ansible_ssh_host=192.168.2.199
+~~ snip
+```
+
+#### 8) Deploy OKD Master Nodes
+```yaml
+$ make okd r=deploy s=master
+```
+
+#### 9) Configure Inventory for OKD Worker Nodes
+$ vi ansible-hosts-co9-master
+```
+~~ snip
+[manager]
+mgr             ansible_ssh_host=192.168.2.171
+
+[compute]
+worker-1        ansible_ssh_host=192.168.2.176
+worker-2        ansible_ssh_host=192.168.2.177
+
+[dns]
+rk9-freeipa     ansible_ssh_host=192.168.2.199
+```
+
+#### 10) Configure Inventory for OKD Worker Nodes
+```yaml
+$ make okd r=deploy s=worker
+```
+
+#### Install Btrfs
+~~~
+sudo dnf update
+sudo reboot
+sudo dnf install https://cbs.centos.org/kojifiles/packages/centos-release-kmods/2/4.el9s/noarch/centos-release-kmods-2-4.el9s.noarch.rpm
+sudo dnf install kmod-btrfs-5.14.0.45-2.el9s.x86_64
+sudo modprobe btrfs
+sudo mkfs.btrfs /dev/vdb
+sudo mount /dev/vdb /mnt
+~~~
 ## References
 - https://www.pivert.org/deploy-openshift-okd-on-proxmox-ve-or-bare-metal-tutorial/
 - https://stackoverflow.com/questions/65266545/okd-installation-behind-proxy
@@ -231,4 +283,7 @@ String
 ## TODO
 
 ## Debugging
+
+## Tracking Issues
+- https://github.com/coreos/fedora-coreos-tracker/issues/94
 

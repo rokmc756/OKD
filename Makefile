@@ -42,8 +42,21 @@ download:
 		elif [ "${s}" = "network" ]; then\
 			ln -sf ansible-hosts-co9-network ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "client" ]; then\
+			ln -sf ansible-hosts-co9-client ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+			cp /home/jomoon/secret-infos/install-config.yaml.j2 /home/jomoon/OKD/roles/okd/templates/;\
 		elif [ "${s}" = "dns" ]; then\
 			ln -sf ansible-hosts-co9-dns ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "master" ]; then\
+			ln -sf ansible-hosts-co9-master ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "worker" ]; then\
+			ln -sf ansible-hosts-co9-worker ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "bootstrap" ]; then\
+			ln -sf ansible-hosts-co9-bootstrap ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		else\
 			echo "No actions for Network";\
@@ -53,7 +66,7 @@ download:
 		exit;\
 	fi
 	@make -f Makefile.${*} r=${r} s=${s} c=${c} USERNAME=${USERNAME}
-	#@rm -f setup-${*}.yml Makefile.${*}
+	@rm -f setup-${*}.yml Makefile.${*}
 
 
 # clean:

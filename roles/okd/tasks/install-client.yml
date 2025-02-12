@@ -121,7 +121,7 @@
     openshift-install create ignition-configs --dir=okd4 --log-level=debug
   register: create_okd_ignition_configs
   args:
-    chdir: "{{ okd.base_path }}"
+    chdir: "{{ _okd.base_path }}"
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg={{ create_okd_ignition_configs }}

@@ -3,15 +3,15 @@
     - name: Download Download Software Binaries and Save the into Ansible Files Directory
       become: true
       vars:
-        dss_download_version: "{{ _dss.major_version }}.{{ _dss.minor_version }}.{{ _dss.patch_version }}"
-        local_dir: "/home/jomoon/Dataiku"
+        okd_download_version: "{{ _okd.major_version }}.{{ _okd.minor_version }}.{{ _okd.patch_version }}"
+        local_dir: "/home/jomoon/OKD"
       get_url:
         url: "{{ item.url }}"
         dest: "{{ item.dest }}"
       with_items:
-        - { url: "{{ _dss.download_url }}/{{ dss_download_version }}/dataiku-dss-{{ dss_download_version }}.tar.gz",
-            dest: "{{ local_dir }}/roles/dss/files/dataiku-dss-{{ dss_download_version }}.tar.gz" }
-        - { url: "{{ _dss.download_fm_url }}/{{ dss_download_version }}/dataiku-fm-{{ dss_download_version }}.tar.gz",
-            dest: "{{ local_dir }}/roles/dss/files/dataiku-fm-{{ dss_download_version }}.tar.gz" }
+        - { url: "{{ _okd.download_url }}/{{ okd_download_version }}/dataiku-dss-{{ okd_download_version }}.tar.gz",
+            dest: "{{ local_dir }}/roles/okd/files/dataiku-dss-{{ okd_download_version }}.tar.gz" }
+        - { url: "{{ _okd.download_fm_url }}/{{ dss_download_version }}/dataiku-fm-{{ dss_download_version }}.tar.gz",
+            dest: "{{ local_dir }}/roles/okd/files/dataiku-fm-{{ dss_download_version }}.tar.gz" }
       tags: download
 
