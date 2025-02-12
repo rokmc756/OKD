@@ -18,11 +18,11 @@ OKD is the community distribution of Kubernetes optimized for continuous applica
 ## Supported Platform and OS
 Virtual Machines\
 Baremetal\
-RHEL and CentOS 9 and Rocky Linux 9.x\
+CentOS Stream 9.x
 
 ## Prerequisite for Ansible Host
 MacOS or Windows Linux Subsysetm or Many kind of Linux Distributions should have ansible as ansible host.\
-Supported OS for ansible target host should be prepared with package repository configured such as yum, dnf and apt\
+Supported OS for ansible target host should be prepared with package repository configured such as yum, dnf and apt
 
 ## Prepare Ansible Host to run this Ansible Playbook
 * MacOS
