@@ -7,6 +7,14 @@ OKD is the community distribution of Kubernetes optimized for continuous applica
 ## OKD Installation Target and Dependencies
 ![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-installation-target.png)
 
+## OKD Architecture
+![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-architecture_overview.png)
+
+## Build and Deployment Containers
+![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/building-container.png)
+- https://docs.okd.io/4.10/architecture/understanding-development.html
+
+
 ## Supported Platform and OS
 Virtual Machines\
 Baremetal\
