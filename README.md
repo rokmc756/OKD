@@ -106,8 +106,8 @@ mgr             ansible_ssh_host=192.168.2.171
 
 [dns]
 rk9-freeipa     ansible_ssh_host=192.168.2.199
-
 ```
+
 #### 2) Setup Network with Resolved for Manager Node
 ```
 $ make okd r=setup s=network c=resolved
