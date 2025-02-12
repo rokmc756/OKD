@@ -16,9 +16,9 @@
   when: ( network is defined and network == true )
 
 
-- name: Setup OKD Manager
-  import_tasks: setup-mgr.yml
-  tags: setup, install
+- name: Deploy OKD Manager
+  import_tasks: deploy-mgr.yml
+  tags: deploy, setup, install
   when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 
 
@@ -53,7 +53,7 @@
 
 
 - name: Destroy OKD Manager
-  import_tasks: uninstall-mgr.yml
+  import_tasks: destroy-mgr.yml
   tags: destroy, remove, delete, uninstall
   when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 

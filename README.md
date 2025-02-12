@@ -137,6 +137,44 @@ or
 $ make okd r=remove s=dns c=all
 ```
 
+#### Configure Inventory for OKD Manager Node
+$ vi ansible-hosts-co9-mgr
+```
+[all:vars]
+ssh_key_filename="id_rsa"
+remote_machine_username="jomoon"
+remote_machine_password="changeme"
+ansible_python_interpreter=/usr/bin/python3
+
+[manager]
+mgr             ansible_ssh_host=192.168.2.171
+
+[_bootstrap]
+bootstrap       ansible_ssh_host=192.168.2.172
+
+[master]
+master-1        ansible_ssh_host=192.168.2.173
+master-2        ansible_ssh_host=192.168.2.174
+master-3        ansible_ssh_host=192.168.2.175
+
+[compute]
+worker-1        ansible_ssh_host=192.168.2.176
+worker-2        ansible_ssh_host=192.168.2.177
+
+[dns]
+rk9-freeipa     ansible_ssh_host=192.168.2.199
+```
+
+#### Deploy OKD Manager Node
+```
+$ make okd r=deploy s=mgr
+```
+
+#### Deploy OKD Manager Node
+```
+$ make okd r=destroy s=mgr
+
+```
 
 ## References
 - https://www.pivert.org/deploy-openshift-okd-on-proxmox-ve-or-bare-metal-tutorial/

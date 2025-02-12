@@ -26,7 +26,7 @@
 
 - name: Get Manager Manager IP Address
   set_fact:
-    manager_ipaddr: "{{ hostvars[inventory_hostname][-netdev].ipv4.address }}"
+    manager_ipaddr: "{{ hostvars[inventory_hostname][_netdev].ipv4.address }}"
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['all'] }}"

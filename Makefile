@@ -36,8 +36,11 @@ download:
 %:
 	@cat Makefile.tmp  | sed -e 's/temp/${*}/g' > Makefile.${*}
 	@if [ "${*}" = "okd" ]; then\
-		if [ "${s}" = "network" ]; then\
-			ln -sf ansible-hosts-mgr-co9 ansible-hosts;\
+		if [ "${s}" = "mgr" ]; then\
+			ln -sf ansible-hosts-co9-mgr ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "network" ]; then\
+			ln -sf ansible-hosts-co9 ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		elif [ "${s}" = "dns" ]; then\
 			ln -sf ansible-hosts-co9-dns ansible-hosts;\
