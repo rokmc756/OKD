@@ -27,45 +27,10 @@ $ yum install ansible
 ```
 
 ## How to Deploy and Destroy OKD
-### Configure Variables and Inventory with Hostnames, IP Addresses, sudo Username and Password
-#### 1) Deploy OKD Manager
+### Setup DNS with FreeIPA
+#### 1) Configure Varialbes for DNS Zone and Records
 ```
-$ vi ansible-hosts-co9-mgr
-~~ snip
-[manager]
-mgr             ansible_ssh_host=192.168.1.181
-
-$ make okd r=install s=network
-$ make okd r=install s=mgr
-$ make okd r=install s=client
-```
-
-### 2) Deploy OKD BootStrap
-```
-$ vi ansible-hosts-co9-bootstrap
-~~ snip
-[bootstrap]
-bootstrap01       ansible_ssh_host=192.168.1.182
-
-$ make okd r=install s=bootstrap
-```
-
-### Deploy OKD Master
-```
-$ vi ansible-hosts-co9-master
-~~ snip
-[manager]
-mgr             ansible_ssh_host=192.168.1.181
-
-[master]
-master01        ansible_ssh_host=192.168.1.183
-
-$ make okd r=install s=master
-```
-
-#### Configure Varialbes for DNS Zone and Records
 $ vi roles/okd/var/main.yml
-```
 ---
 _dns:
   zone:
@@ -104,54 +69,52 @@ _dns:
       - { name: "177",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "worker-2.okd4.pivotal.io."  }
 ```
 
-#### Add DNS Zones and Records
+#### 2) Add DNS Zones and Records
 ```
 $ make okd r=setup s=dns c=zone
 $ make okd r=setup s=dns c=record
-
 or
 $ make okd r=setup s=dns c=all
 ```
 
-#### Remove DNS Zones and Records
-```
+#### 3) Remove DNS Zones and Records
+```yaml
 $ make okd r=remove s=dns c=record
 $ make okd r=remove s=dns c=zone
-
 or
 $ make okd r=remove s=dns c=all
 ```
 
-
-### Setup Network with Resolved or DNSMasq for Manager Node
-#### 1) Configure Varialbes for DNS Zone and Records
-$ vi ansible-hosts-co9-network
+###  Setup Network with Resolved or DNSMasq for Manager Node
+#### 1) Configure Network Inventory for Manager Node
 ```
+$ vi ansible-hosts-co9-network
 ~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
 
 [dns]
 rk9-freeipa     ansible_ssh_host=192.168.2.199
+
 ```
-#### 2) Setup Network with Resolved or DNSMasq
+#### 2) Setup Network with Resolved for Manager Node
 ```
 $ make okd r=setup s=network c=resolved
 or
 $ make okd r=setup s=network c=dnsmasq
 ```
-#### 3) Remove Network with Resolved or DNSMasq
+
+#### 3) Setup Network with DNSMasq for Manager Node
 ```
 $ make okd r=remove s=network c=dnsmasq
 or
 $ make okd r=remove s=network c=resolved
 ```
 
-
 ### Setup OKD Manager Node
 #### 1) Configure Inventory for OKD Manager Node
-$ vi ansible-hosts-co9-mgr
 ```
+$ vi ansible-hosts-co9-mgr
 ~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
@@ -171,19 +134,22 @@ worker-2        ansible_ssh_host=192.168.2.177
 [dns]
 rk9-freeipa     ansible_ssh_host=192.168.2.199
 ```
+
 #### 2) Deploy OKD Manager Node
 ```
 $ make okd r=deploy s=mgr
 ```
+
 #### 3) Deploy OKD Manager Node
 ```
 $ make okd r=destroy s=mgr
 ```
 
 
-#### 4) Configure Inventory for OKD BootStrap Node
-$ vi ansible-hosts-co9-bootstrap
+### Deploy OKD BootStrap Node
+#### 1) Configure Inventory for OKD BootStrap Node
 ```
+$ vi ansible-hosts-co9-bootstrap
 ~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
@@ -196,19 +162,20 @@ rk9-freeipa     ansible_ssh_host=192.168.2.199
 ~~ snip
 ```
 
-#### 5) Deploy OKD BootStrap Node
+#### 2) Deploy OKD BootStrap Node
 ```
 $ make okd r=deploy s=bootstrap
 ```
 
-#### 6) Rollback Centos After Removing Customer Boot Loader
+#### 3) Rollback Centos After Removing Customer Boot Loader
 ```
 $ make okd r=rollback s=bootstrap c=centos
 ```
 
-#### 7) Configure Inventory for OKD Master Nodes
-$ vi ansible-hosts-co9-master
+### Deploy OKD Master Nodes
+#### 1) Configure Inventory for OKD Master Nodes
 ```yaml
+$ vi ansible-hosts-co9-master
 ~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
@@ -222,14 +189,15 @@ rk9-freeipa     ansible_ssh_host=192.168.2.199
 ~~ snip
 ```
 
-#### 8) Deploy OKD Master Nodes
+#### 2) Deploy OKD Master Nodes
 ```yaml
 $ make okd r=deploy s=master
 ```
 
-#### 9) Configure Inventory for OKD Worker Nodes
-$ vi ansible-hosts-co9-master
+### Deploy OKD Worker Nodes
+#### 1) Configure Inventory for OKD Worker Nodes
 ```
+$ vi ansible-hosts-co9-master
 ~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
@@ -242,7 +210,7 @@ worker-2        ansible_ssh_host=192.168.2.177
 rk9-freeipa     ansible_ssh_host=192.168.2.199
 ```
 
-#### 10) Configure Inventory for OKD Worker Nodes
+#### 2) Deploy OKD Worker Nodes
 ```yaml
 $ make okd r=deploy s=worker
 ```
