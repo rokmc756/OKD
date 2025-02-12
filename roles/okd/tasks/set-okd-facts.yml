@@ -19,9 +19,9 @@
     ipaddr: "{{ ipaddr2 }}"
     _netdev: "{{ 'ansible_'~ netdev2 }}"
     _ipaddr: "{{ ipaddr2 }}"
-  delegate_to: "{{ item }}"
-  delegate_facts: true
-  with_items: "{{ groups['all'] }}"
+  #delegate_to: "{{ item }}"
+  #delegate_facts: true
+  #with_items: "{{ groups['all'] }}"
 
 
 - name: Get Manager Manager IP Address

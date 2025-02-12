@@ -7,12 +7,13 @@
 - name: Set Facts For Network and Packages Informations
   import_tasks: set-okd-facts.yml
   tags: install, uninstall, deploy, destory, setup, remove
+  when: inventory_hostname not in groups['dns']
 
 
-- name: Import OKD DNS Playbook
-  import_tasks: dns/main.yml
+- name: Import OKD Network Playbook
+  import_tasks: network/main.yml
   tags: setup, remove
-  when: ( dns is defined and dns == true )
+  when: ( network is defined and network == true )
 
 
 - name: Setup OKD Manager
@@ -65,12 +66,12 @@
 
 - name: Setup DNS Zone and Record
   import_tasks: setup-freeipa.yml
-  tags: setup, config
-  when: ( freeipa is defined and freeipa == true ) and inventory_hostname in groups['dns']
+  tags: setup, create, install
+  when: ( dns is defined and dns == true ) and inventory_hostname in groups['dns']
 
 
 - name: Remove DNS Zone and Record
   import_tasks: remove-freeipa.yml
-  tags: remove, delete
-  when: ( freeipa is defined and freeipa == true ) and inventory_hostname in groups['dns']
+  tags: remove, delete, uninstall
+  when: ( dns is defined and dns == true ) and inventory_hostname in groups['dns']
 

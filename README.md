@@ -78,9 +78,65 @@ master01        ansible_ssh_host=192.168.1.183
 $ make okd r=install s=master
 ```
 
-
-#### Test
+#### Configure Varialbes for DNS Zone and Records
+$ vi roles/okd/var/main.yml
 ```
+---
+_dns:
+  zone:
+    - { name: okd4.pivotal.io, type: forward }
+    - { name: okd5.pivotal.io, type: forward }
+    - { name: 4.168.192.in-addr.arpa, type: reverse }
+    - { name: 5.168.192.in-addr.arpa, type: reverse }
+  resource:
+    forward:
+      - {  name: "api",        zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.171"  }
+      - {  name: "api-int",    zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.171"  }
+      - {  name: "bootstrap",  zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.172"  }
+      - {  name: "master-1",   zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.173"  }
+      - {  name: "etcd-1",     zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.173"  }
+      - {  name: "master-2",   zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.174"  }
+      - {  name: "etcd-2",     zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.174"  }
+      - {  name: "master-3",   zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.175"  }
+      - {  name: "etcd-3",     zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.175"  }
+      - {  name: "worker-1",   zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.176"  }
+      - {  name: "worker-2",   zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.177"  }
+      - {  name: "_etcd-server-ssl._tcp",  zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.173"  }
+      - {  name: "_etcd-server-ssl._tcp",  zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.174"  }
+      - {  name: "_etcd-server-ssl._tcp",  zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.4.175"  }
+    reverse:
+      - { name: "171",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "api.okd4.pivotal.io."  }
+      - { name: "171",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "api-int.okd4.pivotal.io."  }
+      - { name: "172",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "bootstrap.okd4.pivotal.io."  }
+      - { name: "173",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "master-1.okd4.pivotal.io."  }
+      - { name: "173",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "etcd-1.okd4.pivotal.io."  }
+      - { name: "174",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "master-2.okd4.pivotal.io."  }
+      - { name: "174",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "etcd-2.okd4.pivotal.io."  }
+      - { name: "175",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "master-3.okd4.pivotal.io."  }
+      - { name: "175",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "etcd-3.okd4.pivotal.io."  }
+      - { name: "173",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "_etcd-server-ssl.tcp.okd4.pivotal.io."  }
+      - { name: "174",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "_etcd-server-ssl.tcp.okd4.pivotal.io."  }
+      - { name: "175",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "_etcd-server-ssl.tcp.okd4.pivotal.io."  }
+      - { name: "176",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "worker-1.okd4.pivotal.io."  }
+      - { name: "177",  zone: 4.168.192.in-addr.arpa,  type: "--ptr-rec", value: "worker-2.okd4.pivotal.io."  }
+```
+
+#### Add DNS Zones and Records
+```
+$ make okd r=setup s=dns c=zone
+$ make okd r=setup s=dns c=record
+
+or
+$ make okd r=setup s=dns c=all
+```
+
+#### Remove DNS Zones and Records
+```
+$ make okd r=remove s=dns c=record
+$ make okd r=remove s=dns c=zone
+
+or
+$ make okd r=remove s=dns c=all
 ```
 
 

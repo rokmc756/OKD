@@ -39,15 +39,18 @@ download:
 		if [ "${s}" = "network" ]; then\
 			ln -sf ansible-hosts-mgr-co9 ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "dns" ]; then\
+			ln -sf ansible-hosts-co9-dns ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		else\
 			echo "No actions for Network";\
-		fi
+		fi;\
 	else\
 		echo "No actions for Network";\
 		exit;\
 	fi
 	@make -f Makefile.${*} r=${r} s=${s} c=${c} USERNAME=${USERNAME}
-	@rm -f setup-${*}.yml Makefile.${*}
+	#@rm -f setup-${*}.yml Makefile.${*}
 
 
 # clean:
