@@ -1,7 +1,10 @@
 ## What is this Ansible Playbook for OKD
 It is Ansible Playbook to deploy OKD for Rocky/CentOS 9.x. The purpose of this is only for development environment not production.
 
-## OKD Architecutre
+## What is OKD?
+OKD is the community distribution of Kubernetes optimized for continuous application development and multi-tenant deployment. It adds developer and operational-centric tools on top of Kubernetes, enabling rapid application development, easy deployment and scaling, and long-term lifecycle maintenance.
+
+## OKD Installation Target and Dependencies
 ![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-installation-target.png)
 
 ## Supported Platform and OS
