@@ -8,7 +8,7 @@ OKD is the community distribution of Kubernetes optimized for continuous applica
 ![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-installation-target.png)
 
 ## OKD Architecture
-![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-architecture_overview.png)
+![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/okd-architecture-overview.png)
 
 ## Build and Deployment Containers
 ![alt text](https://raw.githubusercontent.com/rokmc756/okd/main/roles/okd/images/building-container.png)
