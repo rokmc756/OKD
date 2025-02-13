@@ -1,0 +1,190 @@
+odk:
+	@if [ "${r}" = "init" ] || [ "${r}" = "uninit" ] || [ "${r}" = "reinit" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to init/uninit/reinit odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to init/uninit/reinit odk";\
+			fi\
+		else\
+			echo "No actions to init/uninit/reinit odk";\
+		fi;\
+	elif [ "${r}" = "prepare" ] || [ "${r}" = "format" ] || [ "${r}" = "clean" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to prepare/format/clean odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to prepare/format/clean odk";\
+			fi\
+		else\
+			echo "No actions to prepare/format/clean odk";\
+		fi;\
+	elif [ "${r}" = "create" ] || [ "${r}" = "recreate" ] || [ "${r}" = "copy" ] || [ "${r}" = "delete" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			elif [ ! -z ${c} ];  then\
+				if [ "${c}" = "all" ]; then\
+					ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' -e '{odk_all: True}' --tags='${r}';\
+				elif [ "${c}" != "all" ]; then\
+					ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' -e '{"${c}": True}' --tags='${r}';\
+				else\
+					echo "No setup action";\
+				fi\
+			else\
+				echo "No actions to create/copy/delete odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to create/copy/delete odk";\
+			fi\
+		else\
+			echo "No actions to create/copy/delete odk";\
+		fi;\
+	elif [ "${r}" = "bootstrap" ] || [ "${r}" = "start" ] || [ "${r}" = "stop" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to bootstrap/start/stop odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to bootstrap/start/stop odk";\
+			fi\
+		else\
+			echo "No actions to bootstrap/start/stop odk";\
+		fi;\
+	elif [ "${r}" = "enable" ] || [ "${r}" = "disable" ] || [ "${r}" = "config" ] || [ "${r}" = "change" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to enable/disable/config/change odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to enable/disable/config/change odk";\
+			fi\
+		else\
+			echo "No actions to enable/disable/config/change odk";\
+		fi;\
+	elif [ "${r}" = "upload" ] || [ "${r}" = "download" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to upload/download odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to upload/download odk";\
+			fi\
+		else\
+			echo "No actions to upload/download odk";\
+		fi;\
+	elif [ "${r}" = "install" ] || [ "${r}" = "uninstall" ] || [ "${r}" = "deploy" ] || [ "${r}" = "destroy" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to install/uninstall/deploy/destroy odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to install/uninstall/deploy/destroy odk";\
+			fi\
+		else\
+			echo "No actions to install/uninstall/deploy/destroy odk";\
+		fi;\
+	elif [ "${r}" = "setup" ] || [ "${r}" = "add" ] || [ "${r}" = "remove" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			elif [ ! -z ${c} ];  then\
+				if [ "${c}" = "all" ]; then\
+					ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' -e '{odk_all: True}' --tags='${r}';\
+				elif [ "${c}" != "all" ]; then\
+					ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' -e '{"${c}": True}' --tags='${r}';\
+				else\
+					echo "No Component";\
+				fi\
+			else\
+					echo "No Aetup Action";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to add/setup/remove odk";\
+			fi\
+		else\
+			echo "No actions to add/setup/remove odk";\
+		fi;\
+	elif [ "${r}" = "fetch" ] || [ "${r}" = "disfetch" ] || [ "${r}" = "rollback" ] || [ "${r}" = "return" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			elif [ ! -z ${c} ];  then\
+				if [ "${c}" = "all" ]; then\
+					ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' -e '{odk_all: True}' --tags='${r}';\
+				elif [ "${c}" != "all" ]; then\
+					ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' -e '{"${c}": True}' --tags='${r}';\
+				else\
+					echo "No Component";\
+				fi\
+			else\
+				echo "No actions to fetch/disfetch/rollback/return odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to fetch/disfetch/rollback/return odk";\
+			fi\
+		else\
+			echo "No actions to fetch/disfetch/rollback/return odk";\
+		fi;\
+	elif [ "${r}" = "upgrade" ] || [ "${r}" = "downgrade" ]; then\
+		if [ ! -z ${r} ] && [ "${s}" != "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{"${s}": True}' --tags='${r}';\
+			else\
+				echo "No actions to upgrade/downgrade odk";\
+			fi\
+		elif [ ! -z ${r} ] && [ "${s}" = "all" ]; then\
+			if [ -z ${c} ];  then\
+				ansible-playbook --ssh-common-args='-o UserKnownHostsFile=./known_hosts' -u ${USERNAME} setup-odk.yml -e '{odk_all: True}' --tags='${r}';\
+			else\
+				echo "No actions to upgrade/downgrade odk";\
+			fi\
+		else\
+			echo "No actions to upgrade/downgrade odk";\
+		fi;\
+	else\
+		echo "No actions to odk role";\
+		exit;\
+	fi
+

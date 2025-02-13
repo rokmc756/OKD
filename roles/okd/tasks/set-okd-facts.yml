@@ -152,8 +152,6 @@
   delegate_to: localhost
   delegate_facts: true
   when: inventory_hostname in groups['manager']
-- debug: msg={{ okd_pull_secret.stdout | string }}
-  when: inventory_hostname in groups['manager']
 
 
 - name: Get Local SSH Key Secret
@@ -162,15 +160,11 @@
   delegate_to: localhost
   delegate_facts: true
   when: inventory_hostname in groups['manager']
-- debug: msg={{ local_ssh_key_secret.stdout | string }}
-  when: inventory_hostname in groups['manager']
 
 
 - name: Get Manager SSH Key Secret
   command: cat {{ _okd.base_path }}/.ssh/id_rsa.pub
   register: mgr_ssh_key_secret
-  when: inventory_hostname in groups['manager']
-- debug: msg={{ mgr_ssh_key_secret.stdout  }}
   when: inventory_hostname in groups['manager']
 
 
@@ -179,5 +173,4 @@
     local_ssh_key_secret: "{{ local_ssh_key_secret.stdout | string }}"
     mgr_ssh_key_secret: "{{ mgr_ssh_key_secret.stdout  }}"
   when: inventory_hostname in groups['manager']
-
 

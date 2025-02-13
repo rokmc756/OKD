@@ -1,0 +1,28 @@
+- name: Validate if OC Nodes are All Ready
+  shell: |
+    oc get nodes | sed 1d | awk '{print $2}' | grep NotReady | wc -l
+  register: check_oc_node_status
+  until: check_oc_node_status.stdout|int == 0
+  retries: 60
+  delay: 30
+  when: inventory_hostname in groups['master']
+- debug: msg={{ check_oc_node_status }}
+  when: print_debug == true and inventory_hostname in groups['master']
+
+
+- name: Validate if All Containers are Running Normally
+  shell: |
+    kubectl get pods --all-namespaces -o wide | sed 1d | awk '{print $4}' | grep ContainerCreating | wc -l
+  register: check_all_containers_running
+  until: check_all_containers_running.stdout|int == 0
+  retries: 60
+  delay: 30
+  when: inventory_hostname in groups['master']
+- debug: msg={{ all_check_containers_running }}
+  when: print_debug == true and inventory_hostname in groups['master']
+
+
+# nc -nv 192.168.2.175 9980
+# nc -nv 192.168.2.173 2380
+
+

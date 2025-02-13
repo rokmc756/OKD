@@ -19,7 +19,7 @@
 - name: Import OKD Network Playbook
   import_tasks: network/main.yml
   tags: setup, remove
-  when: ( network is defined and network == true ) and inventory_hostname in groups['manager']
+  when: ( network is defined and network == true ) and inventory_hostname not in groups['dns']
 
 
 - name: Deploy OKD Manager
@@ -64,10 +64,16 @@
   when: ( mgr is defined and mgr == true ) and inventory_hostname in groups['manager']
 
 
+- name: Setup NTP Service
+  import_tasks: ext/setup-chrony.yml
+  tags: setup, install
+  when: ( ntp is defined and ntp == true )
+
+
 - name: Back to CentOS
   import_tasks: ext/back-to-centos.yml
   tags: rollback, return
-  when: ( centos is defined and centos == true ) and inventory_hostname not in groups['dns']
+  when: ( centos is defined and centos == true ) and ( inventory_hostname not in groups['dns'] and inventory_hostname not in groups['manager'] )
 
 
 - name: Remove DNS Zone and Record

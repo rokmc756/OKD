@@ -58,6 +58,7 @@ _dns:
     forward:
       - {  name: "api",        zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.2.171"  }
       - {  name: "api-int",    zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.2.171"  }
+      - {  name: "*.apps",     zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.2.171"  }
       - {  name: "bootstrap",  zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.2.172"  }
       - {  name: "master-1",   zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.2.173"  }
       - {  name: "etcd-1",     zone: "okd4.pivotal.io",  type: "-a-rec",  value: "192.168.2.173"  }
@@ -73,6 +74,7 @@ _dns:
     reverse:
       - { name: "171",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "api.okd4.pivotal.io."  }
       - { name: "171",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "api-int.okd4.pivotal.io."  }
+      - { name: "171",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "*.apps.okd4.pivotal.io."  }
       - { name: "172",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "bootstrap.okd4.pivotal.io."  }
       - { name: "173",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "master-1.okd4.pivotal.io."  }
       - { name: "173",  zone: 2.168.192.in-addr.arpa,  type: "--ptr-rec", value: "etcd-1.okd4.pivotal.io."  }
@@ -103,13 +105,25 @@ or
 $ make okd r=remove s=dns c=all
 ```
 
-###  Setup Network with Resolved or DNSMasq for Manager Node
+###  Setup NTP and Network with Resolved or DNSMasq for Manager Node
 #### 1) Configure Network Inventory for Manager Node
 ```
-$ vi ansible-hosts-co9-network
+$ vi ansible-hosts-co9
 ~~ snip
 [manager]
 mgr             ansible_ssh_host=192.168.2.171
+
+[_bootstrap]
+bootstrap       ansible_ssh_host=192.168.2.172
+
+[master]
+master-1        ansible_ssh_host=192.168.2.173
+master-2        ansible_ssh_host=192.168.2.174
+master-3        ansible_ssh_host=192.168.2.175
+
+[compute]
+worker-1        ansible_ssh_host=192.168.2.176
+worker-2        ansible_ssh_host=192.168.2.177
 
 [dns]
 rk9-freeipa     ansible_ssh_host=192.168.2.199
@@ -122,7 +136,12 @@ or
 $ make okd r=setup s=network c=dnsmasq
 ```
 
-#### 3) Setup Network with DNSMasq for Manager Node
+#### 3) Setup NTP for all Nodes
+```
+$ make okd r=setup s=ntp
+```
+
+#### 4) Setup Network with DNSMasq for Manager Node
 ```
 $ make okd r=remove s=network c=dnsmasq
 or
@@ -163,7 +182,12 @@ $ make okd r=deploy s=mgr
 $ make okd r=setup s=client
 ```
 
-#### 4) Destroy OKD Manager Node
+#### 4) Remove OKD Install Clients
+```
+$ make okd r=remove s=client
+```
+
+#### 5) Destroy OKD Manager Node
 ```
 $ make okd r=destroy s=mgr
 ```
@@ -239,9 +263,9 @@ $ make okd r=deploy s=worker
 
 
 ## About Dual Boot Configuration for CoreOS Entry in Grub2
-In this case CoreOS has been instsalled on /dev/vdc while CentOS was in /dev/vda.
-The following configuration is correctly verified on my lab.
-It means hd0 is device for CentOS and hd1 is null and hd1 is device for CoreOS.
+In this case the CoreOS has been instsalled on /dev/vdc the CentOS was installed in /dev/vda.
+The following configuration is correctly verified for BIOS mode only, not UEFI on my lab.
+It means hd0 is device for CentOS and hd1 is null and hd2is device for CoreOS.
 
 ```
 $ vi /etc/grub.d/40_cusom
@@ -266,5 +290,6 @@ menuentry "Fedora CoreOS" {
 ## TODO
 ## Debugging
 ## Tracking Issues
+- https://access.redhat.com/solutions/7057601 ( Currently It matches in this playbook )
 - https://github.com/coreos/fedora-coreos-tracker/issues/94
 

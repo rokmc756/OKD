@@ -62,7 +62,6 @@
   when: print_debug == true and (( zone is defined and zone == true ) or ( okd_all is defined and okd_all == true ))
 
 
-# ipa dnsrecord-add okd5.pivotal.io. api --a-rec 192.168.2.171
 - name: Add DNS A Records
   shell: |
     ipa dnsrecord-add {{ item.zone }} {{ item.name }} --a-rec {{ item.value }}

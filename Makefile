@@ -40,7 +40,7 @@ download:
 			ln -sf ansible-hosts-co9-mgr ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		elif [ "${s}" = "network" ]; then\
-			ln -sf ansible-hosts-co9-network ansible-hosts;\
+			ln -sf ansible-hosts-co9 ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		elif [ "${s}" = "client" ]; then\
 			ln -sf ansible-hosts-co9-client ansible-hosts;\
@@ -57,6 +57,9 @@ download:
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		elif [ "${s}" = "bootstrap" ]; then\
 			ln -sf ansible-hosts-co9-bootstrap ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
+		elif [ "${s}" = "ntp" ]; then\
+			ln -sf ansible-hosts-co9 ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		else\
 			echo "No actions for Network";\

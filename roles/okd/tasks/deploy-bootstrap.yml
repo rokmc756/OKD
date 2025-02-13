@@ -41,8 +41,8 @@
 # openshift-install --dir /root/okd4 wait-for bootstrap-complete --log-level=debug
 # - name: Wait for Bootstrap Complete
 #  shell: |
-#    ssh -o StrictHostKeyChecking=no core@192.168.1.182 "journalctl -b -f -u release-image.service -u bootkube.service"
-# ssh -o StrictHostKeyChecking=no core@192.168.1.182 "journalctl -b -u release-image.service -u bootkube.service"
+#    ssh -o StrictHostKeyChecking=no core@192.168.2.172 "journalctl -b -f -u release-image.service -u bootkube.service"
+#    ssh -o StrictHostKeyChecking=no core@192.168.2.172 "journalctl -b -u release-image.service -u bootkube.service"
 # ~~ snip
 # Dec 21 03:45:16 localhost.localdomain systemd[1]: Finished release-image.service - Download the OpenShift Release Image.
 
