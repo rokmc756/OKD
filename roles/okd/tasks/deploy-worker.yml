@@ -26,7 +26,7 @@
   register: install_coreos_worker_local_drive
 - debug: msg={{ install_coreos_worker_local_drive }}
   when: print_debug == true
-  # --ignition-url=http://192.168.1.181:8080/user.ign --insecure-ignition --copy-network
+  # --ignition-url=http://192.168.1.181:8080/user.ign
 
 
 #- name: Apply Boot Entry

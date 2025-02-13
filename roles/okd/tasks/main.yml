@@ -67,7 +67,7 @@
 - name: Back to CentOS
   import_tasks: ext/back-to-centos.yml
   tags: rollback, return
-  when: ( centos is defined and centos == true ) and inventory_hostname in groups['_bootstrap']
+  when: ( centos is defined and centos == true ) and inventory_hostname not in groups['dns']
 
 
 - name: Remove DNS Zone and Record

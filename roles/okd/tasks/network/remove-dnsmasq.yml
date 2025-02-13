@@ -26,7 +26,7 @@
   shell: |
     export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}' | sed 1d)
     nmcli connection modify {{ item.conn_name }} ipv4.dns "$DNS"
-    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "okd4.pivotal.io"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ _okd.domain }}"
     nmcli connection up {{ item.conn_name }}
   register: rollback_dns_settings
   with_items:
@@ -49,14 +49,14 @@
     - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain={{ _okd.domain }}",         line: "^#domain=example.com",    state: present }
     - { file_name: "/etc/dnsmasq.conf",   regexp: "^address=/apps.{{ _okd.domain }}/{{ manager_ipaddr }}",   line: "#address=/double-click.net/127.0.0.1",   state: present }
 
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^interface={{ netdev1 }}",         line: "interface=lo",            state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^listen-address=*",    line: "#listen-address=",                    state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain-needed",                   line: "#domain-needed",          state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^bogus-priv",                      line: "#bogus-priv",             state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^strict-order",                    line: "#strict-order",           state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^expand-hosts",                    line: "#expand-hosts",           state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^no-resolv",                       line: "#no-resolv",              state: present }
-    # - { file_name: "/etc/dnsmasq.conf",   regexp: "^port=53",                         line: "#port=5353",              state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^interface={{ netdev1 }}",         line: "interface=lo",            state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^listen-address=*",    line: "#listen-address=",                    state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^domain-needed",                   line: "#domain-needed",          state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^bogus-priv",                      line: "#bogus-priv",             state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^strict-order",                    line: "#strict-order",           state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^expand-hosts",                    line: "#expand-hosts",           state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^no-resolv",                       line: "#no-resolv",              state: present }
+# - { file_name: "/etc/dnsmasq.conf",   regexp: "^port=53",                         line: "#port=5353",              state: present }
 
 
 - name: Uninstall DNSMaq Packages

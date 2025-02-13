@@ -13,7 +13,7 @@
   shell: |
     export DNS=$(nmcli device show {{ item.netdev_name }} | grep ^IP4.DNS | awk '{print $2}')
     nmcli connection modify {{ item.conn_name }} ipv4.dns "$DNS"
-    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "okd4.pivotal.io"
+    nmcli connection modify {{ item.conn_name }} ipv4.dns-search "{{ _okd.domain }}"
     nmcli connection up {{ item.conn_name }}
   register: rollback_dns_settings
   with_items:
@@ -34,7 +34,7 @@
   ignore_errors: true
   with_items:
     - { file_name: "/etc/systemd/resolved.conf",  regexp: "^DNS=*",  line: "#DNS=",  state: present }
-    - { file_name: "/etc/resolv.conf",            regexp: "^search okd4.pivotal.io",    line: "search okd4.pivotal.io",        state: present }
+    - { file_name: "/etc/resolv.conf",            regexp: "^search {{ _okd.domain }}",    line: "search {{ _okd.domain }}",    state: present }
 
 
 - name: Uninstall Systemd Resolved Packages

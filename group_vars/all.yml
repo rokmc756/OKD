@@ -16,6 +16,7 @@ _okd:
   base_path: /root
   host_num: "{{ groups['all'] | length }}"
   local_home_dir: "/home/jomoon"
+  dns: "192.168.2.199 8.8.8.8 168.126.63.1"
   coreos_dev: "/dev/vdc"  # coreos_dev: "/dev/nvme0n1"
   download_client: false
   net:

@@ -36,12 +36,12 @@
     - { file_name: "/etc/dnsmasq.conf",  regexp: "^#port=5353",           line: "port=53",  state: present }
 
 
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#no-resolv",           line: "no-resolv",  state: present }
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#strict-order",        line: "strict-order",  state: present }
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=::1,127.0.0.1,{{ ipaddr0 }},{{ ipaddr2 }}",  state: present }
-    # - { file_name: "/etc/dnsmasq.conf",  regexp: "^#addn-hosts=*",        line: "addn-host=/etc/dnsmasq.d/addresses.conf",  state: present }
-
-#addn-hosts=/etc/banner_add_hosts
+#   - { file_name: "/etc/dnsmasq.conf",  regexp: "^#no-resolv",           line: "no-resolv",  state: present }
+#   - { file_name: "/etc/dnsmasq.conf",  regexp: "^#strict-order",        line: "strict-order",  state: present }
+#   - { file_name: "/etc/dnsmasq.conf",  regexp: "^#listen-address=*",    line: "listen-address=::1,127.0.0.1,{{ ipaddr0 }},{{ ipaddr2 }}",  state: present }
+#   - { file_name: "/etc/dnsmasq.conf",  regexp: "^#addn-hosts=*",        line: "addn-host=/etc/dnsmasq.d/addresses.conf",  state: present }
+#
+# addn-hosts=/etc/banner_add_hosts
 
 
 - name: Configure DNSMasq Server

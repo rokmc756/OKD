@@ -158,7 +158,12 @@ rk9-freeipa     ansible_ssh_host=192.168.2.199
 $ make okd r=deploy s=mgr
 ```
 
-#### 3) Deploy OKD Manager Node
+#### 3) Setup OKD Install Clients
+```
+$ make okd r=setup s=client
+```
+
+#### 4) Destroy OKD Manager Node
 ```
 $ make okd r=destroy s=mgr
 ```
