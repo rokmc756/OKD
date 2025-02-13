@@ -17,10 +17,10 @@ _okd:
   host_num: "{{ groups['all'] | length }}"
   local_home_dir: "/home/jomoon"
   dns: "192.168.2.199 8.8.8.8 168.126.63.1"
-  coreos_dev: "/dev/vdc"  # coreos_dev: "/dev/nvme0n1"
+  coreos_dev: "/dev/vdc"                      # coreos_dev: "/dev/nvme0n1"
   download_client: false
   net:
-    type: "virtual"                            # Or Physical
+    type: "virtual"                           # Or Physical
     gateway: "192.168.2.1"
     vipaddr: "192.168.1.79"
     ipaddr0: "192.168.0.17"
@@ -28,7 +28,7 @@ _okd:
     ipaddr2: "192.168.2.17"
   client:
     net:
-      type: "virtual"                          # Or Physical
+      type: "virtual"                         # Or Physical
       cores: 1
       ipaddr0: "192.168.0.17"
       ipaddr1: "192.168.1.17"

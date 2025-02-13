@@ -5,8 +5,8 @@
   "networkd": {
     "units": [
       {
-        "name": "00-ens224.network",
-        "contents": "[Match]\nName=ens224\n\n[Network]\nAddress=192.168.2.173/24\nGateway=192.168.1.1\nDNS=192.168.0.199\n"
+        "name": "00-{{ netdev }}.network",
+        "contents": "[Match]\nName={{ netdev }}\n\n[Network]\nAddress=192.168.2.173/24\nGateway=192.168.1.1\nDNS=192.168.0.199\n"
       }
     ]
   }

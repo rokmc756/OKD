@@ -6,20 +6,21 @@
   with_items:
     - "coreos-installer"
 
-#- name: Copy Iginition Json Template
-#  template:
-#    src: "{{ item }}.j2"
-#    dest: "{{ _okd.base_path }}/{{ item }}"
-#    owner: root
-#    group: root
-#    mode: 0755
-#  register: copy_ignition_json_temp
-#  with_items:
-#    - "ignition.json"
-#- debug: msg={{ copy_ignition_json_temp }}
+
+- name: Copy Iginition Json Template
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ _okd.base_path }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  register: copy_ignition_json_temp
+  with_items:
+    - "ignition.json"
+- debug: msg={{ copy_ignition_json_temp }}
 
 
-- name: Install Fedora CoreOS Worker to Local NVME Drive
+- name: Install Fedora CoreOS Worker to Local Drive
   shell: |
     coreos-installer install {{ _okd.coreos_dev }} --ignition-url=http://{{ manager_ipaddr }}:8080/worker.ign \
     --insecure-ignition --copy-network
@@ -29,12 +30,19 @@
   # --ignition-url=http://192.168.1.181:8080/user.ign
 
 
-#- name: Apply Boot Entry
-#  import_tasks: ext/apply-boot-entry.yml
+- name: Apply Boot Entry
+  import_tasks: ext/apply-boot-entry.yml
 
 
 - name: Reboot Required
   shell: ( /bin/sleep 5; /sbin/shutdown -r now "Ansible updates triggered" ) &
   ignore_errors: true
   register: reboot_required
+  async: 120
+  poll: 0
+  notify:
+    - Waiting for Server to Come Back after Restart
+
+
+- meta: flush_handlers
 

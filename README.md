@@ -237,6 +237,24 @@ rk9-freeipa     ansible_ssh_host=192.168.2.199
 $ make okd r=deploy s=worker
 ```
 
+
+## About Dual Boot Configuration for CoreOS Entry in Grub2
+In this case CoreOS has been instsalled on /dev/vdc while CentOS was in /dev/vda.
+The following configuration is correctly verified on my lab.
+It means hd0 is device for CentOS and hd1 is null and hd1 is device for CoreOS.
+
+```
+$ vi /etc/grub.d/40_cusom
+
+#!/bin/sh
+exec tail -n +3 $0
+
+menuentry "Fedora CoreOS" {
+        set root='(hd1)'
+        chainloader +1
+}
+```
+
 ## References
 - https://medium.com/@tcij1013/installing-okd-the-community-distribution-of-kubernetes-4-x-cluster-on-a-single-node-8410146858b6
 - https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124

@@ -12,21 +12,21 @@
 #$1$Zzh8f5xO$9r/7462gd8w.S8qmoPZ7d0
 
 
-#- name: Copy Iginition Json Template
-#  template:
-#    src: "{{ item }}.j2"
-#    dest: "{{ okd.base_path }}/{{ item }}"
-#    owner: root
-#    group: root
-#    mode: 0755
-#  register: copy_ignition_json_temp
-#  with_items:
-#    - "ignition.json"
-#    - "dns-config.ini"
-#- debug: msg={{ copy_ignition_json_temp }}
+- name: Copy Iginition Json Template
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ _okd.base_path }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  register: copy_ignition_json_temp
+  with_items:
+    - "ignition.json"
+    - "dns-config.ini"
+- debug: msg={{ copy_ignition_json_temp }}
 
 
-- name: Install Fedora CoreOS Master to Local NVME Drive
+- name: Install Fedora CoreOS Master to Local Drive
   shell: |
     coreos-installer install {{ _okd.coreos_dev }} --ignition-url=http://{{ manager_ipaddr }}:8080/master.ign \
     --insecure-ignition --copy-network
@@ -35,12 +35,19 @@
   when: print_debug == true
 
 
-#- name: Apply Boot Entry
-#  import_tasks: ext/apply-boot-entry.yml
+- name: Apply Boot Entry
+  import_tasks: ext/apply-boot-entry.yml
 
 
 - name: Reboot Required
   shell: ( /bin/sleep 5; /sbin/shutdown -r now "Ansible updates triggered" ) &
   ignore_errors: true
   register: reboot_required
+  async: 120
+  poll: 0
+  notify:
+    - Waiting for Server to Come Back after Restart
+
+
+- meta: flush_handlers
 

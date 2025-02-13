@@ -16,16 +16,23 @@
   when: print_debug == true
 
 
-#- name: Apply Boot Entry
-#  import_tasks: ext/apply-boot-entry.yml
+- name: Apply Boot Entry
+  import_tasks: ext/apply-boot-entry.yml
 
 
 - name: Reboot Required
   shell: ( /bin/sleep 5; /sbin/shutdown -r now "Ansible updates triggered" ) &
   ignore_errors: true
   register: reboot_required
+  async: 120
+  poll: 0
+  notify:
+    - Waiting for Server to Come Back after Restart
 
 
+- meta: flush_handlers
+
+#############################################################################################################################
 # After CoreOS Rebooted
 #
 # The primary services are release-image.service followed by bootkube.service. To watch their status, run e.g.
