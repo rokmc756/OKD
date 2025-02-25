@@ -1,0 +1,19 @@
+---
+- name: Remove SELinux Port Policy
+  shell: |
+    semanage {{ item.name }} -a -t {{ item.type }} -p {{ item.proto }} {{ item.port }}
+  register: remove_selinux_port_policy
+  with_items: "{{ _selinux.semanage }}"
+- debug: msg={{ remove_selinux_port_policy }}
+  when: print_debug == true
+
+
+- name: Change SELinux Policy If It is Enabled
+  shell: |
+    setsebool -P {{ item.name }} off
+  register: change_selinux_policy
+  with_items: "{{ _selinux.policy }}"
+- debug: msg={{ change_selinux_policy }}
+  when: print_debug == true
+
+

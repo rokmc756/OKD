@@ -1,0 +1,41 @@
+---
+- name: Enable Firewalld
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+
+
+- name: Enable Services Permanently
+  firewalld:
+    service: "{{ item.name }}"
+    state: "{{ item.state }}"
+    permanent: true
+    immediate: true
+    offline: true
+  with_items: "{{ _firewall.service }}"
+
+
+- name: Allow Service Ports
+  firewalld:
+    permanent: yes
+    immediate: yes
+    port: "{{ item.port }}/{{ item.proto }}"
+    state: "{{ item.state }}"
+    zone: "{{ item.zone }}"
+  with_items: "{{ _firewall.port }}"
+
+
+- name: Reload Firewalld
+  command: firewall-cmd --reload
+
+
+#- name: Allow Service Ports If Firewalld is running
+#  shell: |
+#    firewall-cmd --add-service={dns,http,https}
+#    firewall-cmd --add-port={6443/tcp,22623/tcp,1936/tcp,8080/tcp}
+#    firewall-cmd --runtime-to-permanent
+#  register: allow_firewalld_service_port
+#- debug: msg={{ allow_firewalld_service_port }}
+#  when: print_debug == true
+

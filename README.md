@@ -293,3 +293,56 @@ menuentry "Fedora CoreOS" {
 - https://access.redhat.com/solutions/7057601 ( Currently It matches in this playbook )
 - https://github.com/coreos/fedora-coreos-tracker/issues/94
 
+## Errors
+- Crash Pods
+```
+[root@co9-node01 ~]# oc -n openshift-machine-config-operator logs pod/machine-config-daemon-9gjb6
+Defaulted container "machine-config-daemon" out of: machine-config-daemon, kube-rbac-proxy
+I0225 07:13:16.236487   36150 start.go:68] Version: machine-config-daemon-4.6.0-202006240615.p0-2999-g911e8829-dirty (911e8829ee867544a650b61751c66f571396bd5c)
+I0225 07:13:16.236547   36150 update.go:2639] Running: mount --rbind /run/secrets /rootfs/run/secrets
+I0225 07:13:16.238202   36150 update.go:2639] Running: mount --rbind /usr/bin /rootfs/run/machine-config-daemon-bin
+I0225 07:13:16.239740   36150 daemon.go:518] using appropriate binary for source=rhel-9 target=rhel-9
+I0225 07:13:16.275560   36150 daemon.go:571] Invoking re-exec /run/bin/machine-config-daemon
+I0225 07:13:16.314274   36150 start.go:68] Version: machine-config-daemon-4.6.0-202006240615.p0-2999-g911e8829-dirty (911e8829ee867544a650b61751c66f571396bd5c)
+E0225 07:13:16.314563   36150 image_manager_helper.go:133] Merged secret file does not exist; defaulting to cluster pull secret
+I0225 07:13:16.314597   36150 image_manager_helper.go:194] Linking rpm-ostree authfile to /var/lib/kubelet/config.json
+F0225 07:13:16.411225   36150 start.go:106] Failed to initialize single run daemon: error reading osImageURL from rpm-ostree: exit status 1
+```
+
+- kubectl -n openshift-etcd logs pods/etcd-etcd-1.okd4.pivotal.io
+```
+{"level":"warn","ts":"2025-02-25T07:10:23.962999Z","caller":"flags/flag.go:93","msg":"unrecognized environment variable","environment-variable":"ETCDCTL_ENDPOINTS="}
+{"level":"warn","ts":"2025-02-25T07:10:28.962902Z","logger":"etcd-client","caller":"v3@v3.5.16/retry_interceptor.go:63","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc0000ea000/127.0.0.1:2379","attempt":0,"error":"rpc error: code = DeadlineExceeded desc = latest balancer error: last connection error: connection error: desc = \"transport: Error while dialing: dial tcp 127.0.0.1:2379: connect: connection refused\""}
+Error: context deadline exceeded
+#### attempt 0
+      member={name="etcd-bootstrap", peerURLs=[https://192.168.0.172:2380}, clientURLs=[https://192.168.0.172:2379]
+      member "https://192.168.2.173:2380" not found in member list, check operator logs for possible scaling problems
+#### sleeping...
+#### attempt 1
+      member={name="etcd-bootstrap", peerURLs=[https://192.168.0.172:2380}, clientURLs=[https://192.168.0.172:2379]
+      member "https://192.168.2.173:2380" not found in member list, check operator logs for possible scaling problems
+#### sleeping...
+#### attempt 2
+      member={name="etcd-bootstrap", peerURLs=[https://192.168.0.172:2380}, clientURLs=[https://192.168.0.172:2379]
+      member "https://192.168.2.173:2380" not found in member list, check operator logs for possible scaling problems
+#### sleeping...
+#### attempt 3
+      member={name="etcd-bootstrap", peerURLs=[https://192.168.0.172:2380}, clientURLs=[https://192.168.0.172:2379]
+      member "https://192.168.2.173:2380" not found in member list, check operator logs for possible scaling problems
+#### sleeping...
+#### attempt 4
+      member={name="etcd-bootstrap", peerURLs=[https://192.168.0.172:2380}, clientURLs=[https://192.168.0.172:2379]
+      member "https://192.168.2.173:2380" not found in member list, check operator logs for possible scaling problems
+#### sleeping...
+#### attempt 5
+      member={name="etcd-bootstrap", peerURLs=[https://192.168.0.172:2380}, clientURLs=[https://192.168.0.172:2379]
+      member "https://192.168.2.173:2380" not found in member list, check operator logs for possible scaling problems
+```
+
+- kubectl -n openshift-operator-lifecycle-manager logs pods/collect-profiles-29007795-vf6zl
+```
+Error: failed to get API group resources: unable to retrieve the complete list of server APIs: v1: Get "https://172.30.0.1:443/api/v1": dial tcp 172.30.0.1:443: connect: connection refused
+time="2025-02-25T07:15:00Z" level=fatal msg="failed to get API group resources: unable to retrieve the complete list of server APIs: v1: Get \"https://172.30.0.1:443/api/v1\": dial tcp 172.30.0.1:443: connect: connection refused"
+```
+
+

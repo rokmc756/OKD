@@ -10,12 +10,6 @@
   when: inventory_hostname not in groups['dns']
 
 
-- name: Setup DNS Zone and Record
-  import_tasks: dns/setup-freeipa.yml
-  tags: setup, create, install
-  when: ( dns is defined and dns == true ) and inventory_hostname in groups['dns']
-
-
 - name: Import OKD Network Playbook
   import_tasks: network/main.yml
   tags: setup, remove
@@ -74,6 +68,12 @@
   import_tasks: ext/back-to-centos.yml
   tags: rollback, return
   when: ( centos is defined and centos == true ) and ( inventory_hostname not in groups['dns'] and inventory_hostname not in groups['manager'] )
+
+
+- name: Setup DNS Zone and Record
+  import_tasks: dns/setup-freeipa.yml
+  tags: setup, create, install
+  when: ( dns is defined and dns == true ) and inventory_hostname in groups['dns']
 
 
 - name: Remove DNS Zone and Record

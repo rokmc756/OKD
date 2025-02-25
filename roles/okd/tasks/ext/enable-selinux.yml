@@ -1,0 +1,20 @@
+---
+- name: Change SELinux Policy If It is Enabled
+  shell: |
+    setsebool -P {{ item.name }} {{ item.toggle }}
+  register: change_selinux_policy
+  ignore_errors: true
+  with_items: "{{ _selinux.policy }}"
+- debug: msg={{ change_selinux_policy }}
+  when: print_debug == true
+
+
+- name: Add SELinux Port Policy
+  shell: |
+    semanage {{ item.name }} -a -t {{ item.type }} -p {{ item.proto }} {{ item.port }}
+  register: add_selinux_port_policy
+  ignore_errors: true
+  with_items: "{{ _selinux.semanage }}"
+- debug: msg={{ add_selinux_port_policy }}
+  when: print_debug == true
+

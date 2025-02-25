@@ -27,7 +27,7 @@
 # - { regexp: "^GRUB_DEFAULT=", line: "GRUB_DEFAULT=\"saved\"", dest: "/etc/default/grub", state: present }
 
 
-- name: Install Fedora CoreOS Master to Local NVME Drive
+- name: Install Fedora CoreOS Master to Local Drive
   shell: |
     grub2-mkconfig -o /boot/grub2/grub.cfg
   register: install_coreos_local_drive

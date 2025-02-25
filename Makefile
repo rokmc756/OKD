@@ -62,8 +62,12 @@ download:
 			ln -sf ansible-hosts-co9 ansible-hosts;\
 			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		else\
-			echo "No actions for Network";\
+			ln -sf ansible-hosts-co9 ansible-hosts;\
+			cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 		fi;\
+	elif [ "${*}" = "hosts" ]; then\
+		ln -sf ansible-hosts-co9 ansible-hosts;\
+		cat setup-temp.yml.tmp | sed -e 's/    - temp/    - ${*}/g' > setup-${*}.yml;\
 	else\
 		echo "No actions for Network";\
 		exit;\

@@ -5,6 +5,7 @@
     state: present
   with_items:
     - "nginx-mod-stream"
+    - "libselinux-devel"
 
 
 - name: Add Required Settings for OKD Cluster to Nginx
@@ -52,30 +53,34 @@
   when: print_debug == true
 
 
-- name: Change SELinux Policy If It is Enabled
-  shell: |
-    setsebool -P httpd_can_network_connect on
-    setsebool -P httpd_graceful_shutdown on
-    setsebool -P httpd_can_network_relay on
-    setsebool -P nis_enabled on
-    semanage port -a -t http_port_t -p tcp 6443
-    semanage port -a -t http_port_t -p tcp 22623
-    semanage port -a -t http_port_t -p tcp 1936
-  register: config_dns_settings
-- debug: msg={{ config_dns_settings }}
-  when: print_debug == true
+- name: Enable SELinux for Only Manager node
+  import_tasks: ext/enable-selinux.yml
 
 
-- name: Enable Firewalld
-  import_tasks: enable-firewall.yml
+- name: Enable Firewalld for Only Manager node
+  import_tasks: ext/enable-firewall.yml
 
 
-- name: Allow Service Ports If Firewalld is running
-  shell: |
-    firewall-cmd --add-service={dns,http,https}
-    firewall-cmd --add-port={6443/tcp,22623/tcp,1936/tcp,8080/tcp}
-    firewall-cmd --runtime-to-permanent
-  register: allow_firewalld_service_port
-- debug: msg={{ allow_firewalld_service_port }}
-  when: print_debug == true
+#- name: Change SELinux Policy If It is Enabled
+#  shell: |
+#    setsebool -P httpd_can_network_connect on
+#    setsebool -P httpd_graceful_shutdown on
+#    setsebool -P httpd_can_network_relay on
+#    setsebool -P nis_enabled on
+#    semanage port -a -t http_port_t -p tcp 6443
+#    semanage port -a -t http_port_t -p tcp 22623
+#    semanage port -a -t http_port_t -p tcp 1936
+#  register: config_dns_settings
+#- debug: msg={{ config_dns_settings }}
+#  when: print_debug == true
+
+
+#- name: Allow Service Ports If Firewalld is running
+#  shell: |
+#    firewall-cmd --add-service={dns,http,https}
+#    firewall-cmd --add-port={6443/tcp,22623/tcp,1936/tcp,8080/tcp}
+#    firewall-cmd --runtime-to-permanent
+#  register: allow_firewalld_service_port
+#- debug: msg={{ allow_firewalld_service_port }}
+#  when: print_debug == true
 

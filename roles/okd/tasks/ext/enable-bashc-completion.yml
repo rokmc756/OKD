@@ -1,0 +1,16 @@
+---
+- name: Create POD for Master
+  lineinfile:
+    path: "{{ k8s.base_path }}/.bashrc"
+    line: "{{ item.content }}"
+    insertafter: EOF
+    create: true
+  register: master_pod_created
+  with_items:
+    - { content: " if [ -f /etc/bash_completion ] && ! shopt -oq posix; then " }
+    - { content: "   . /etc/bash_completion " }
+    - { content: " fi " }
+    - { content: " source <(kubectl completion bash) " }
+- debug: msg={{ master_pod_created }}
+  when: print_debug == true
+
